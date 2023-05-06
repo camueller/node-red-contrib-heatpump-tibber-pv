@@ -16,7 +16,7 @@ Wenn eine Wärmepumpe (insbesondere solche mit großem Pufferspeicher) nur eine 
 Dazu müssen am Ende eines Tages die **Stromkosten für jede Stunde des Folgetages berechnet** werden. Von der Leistungsaufnahme der Wärmepumpe wird zunächst die **prognostizierte Leistung der PV-Anlage** abgezogen. Die **verbleibende Leistungsaufnahme** (falls positiv) wird mit dem **zu dieser Stunde gültigen Preis** bewertet. Entsprechend der gewünschten **maximalen Anzahl von täglichen Betriebsstunden der Wärmepumpe** werden die **Stunden mit den geringsten Stromkosten gewählt**. Zu Beginn jeder Stunde wird das **Signal zum Ein- oder Ausschalten** an die Wärmepumpe gesendet.  
 
 ### Prognose der Leistung der PV-Anlage
-Zur Prognose der Leistung der PV-Anlage wird der der Dienst [Solcast](https://solcast.com/) verwendet, der diese [kostenlos für Hauseigentümer mit Dachsolaranlagen bereitstellt](https://solcast.com/free-rooftop-solar-forecasting). Dafür muss man sich einen **kostenlosen Account** anlegen, bei dem Angaben zur  Lage, Ausrichtung und Leistung der PV-Anlage gemacht werden müssen. Die für die Anlage vergebende Resource Id muss in der Flow-Configuration angegeben werden.
+Zur Prognose der Leistung der PV-Anlage wird der der Dienst [Solcast](https://solcast.com/) verwendet, der diese [kostenlos für Hauseigentümer mit Dachsolaranlagen bereitstellt](https://solcast.com/free-rooftop-solar-forecasting). Dafür muss man sich einen **kostenlosen Account** anlegen, bei dem Angaben zur  Lage, Ausrichtung und Leistung der PV-Anlage gemacht werden müssen. Die für die Anlage vergebende Resource Id sowie der API-Key müssen in der Flow-Configuration angegeben werden.
 
 Die Prognose der PV-Leistung erfolgt mit einer Auflösung von 30 Minuten. Der Flow fasst deshalb die zwei Werte einer Stunde zusammen und verwendet den Durchschnitt als prognostizierte PV-Leistung für diese Stunde.
 
@@ -32,7 +32,7 @@ Die Visualisierung des Flows über das Dashboard zeigt mehrere Diaggramme für d
 
 In *PV Forecast* wird die prognostizierte, stündliche Leistung der PV-Anlage in kW gezeigt.
 
-Das Diagramm *Hourly energy price** zeigt den stündlichen Preis für eine kWh.
+Das Diagramm *Hourly energy price* zeigt den stündlichen Preis für eine kWh.
 
 Unter Berücksichtgung der Leistungsaufnahme der Wärmepumpe, der prognostizierten Leistung der PV-Anlage und der stündlichen Strompreise zeigt das Diagramm *Hourly cost* die Stromkosten.
 
@@ -45,3 +45,9 @@ Oberhalb der Diagramme wird das **Datum angezeigt**, für das die Stunden mit de
 
 ## Konfiguration
 ... folgt noch
+
+## Node-RED starten
+Beim Starten von Node-RED muss die Zeitzone gesetzt werden:
+```console
+docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered -e TZ=Europe/Berlin nodered/node-red
+```
