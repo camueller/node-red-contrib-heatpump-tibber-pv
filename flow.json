@@ -1,0 +1,819 @@
+[
+  {
+    "id": "53909232bb435dbf",
+    "type": "tab",
+    "label": "heatpump-tibber-pv",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "678a7f210ceb34a6",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "trigger pv forecast",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 150,
+    "y": 100,
+    "wires": [
+      [
+        "74baf2009a51d306"
+      ]
+    ]
+  },
+  {
+    "id": "b29b435b87b59072",
+    "type": "http request",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "method": "GET",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 550,
+    "y": 100,
+    "wires": [
+      [
+        "d9f83b41aefaa974"
+      ]
+    ]
+  },
+  {
+    "id": "9bb66f7f1ebef7dc",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "test",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"forecasts\":[{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-23T22:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-23T22:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-23T23:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-23T23:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T00:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T00:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T01:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T01:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T02:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T02:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T03:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T03:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T04:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.0111,\"pv_estimate10\":0.0055,\"pv_estimate90\":0.0111,\"period_end\":\"2023-04-24T04:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.1382,\"pv_estimate10\":0.1096,\"pv_estimate90\":0.14511,\"period_end\":\"2023-04-24T05:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.2602,\"pv_estimate10\":0.24718999999999997,\"pv_estimate90\":0.27321,\"period_end\":\"2023-04-24T05:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.7826,\"pv_estimate10\":0.7283,\"pv_estimate90\":0.82173,\"period_end\":\"2023-04-24T06:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.563,\"pv_estimate10\":1.1465,\"pv_estimate90\":1.5967,\"period_end\":\"2023-04-24T06:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.5408,\"pv_estimate10\":1.484,\"pv_estimate90\":2.6437,\"period_end\":\"2023-04-24T07:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.4699,\"pv_estimate10\":1.7707,\"pv_estimate90\":3.6483,\"period_end\":\"2023-04-24T07:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":4.2465,\"pv_estimate10\":2.0172,\"pv_estimate90\":4.567,\"period_end\":\"2023-04-24T08:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":4.8816,\"pv_estimate10\":2.1835,\"pv_estimate90\":5.4902,\"period_end\":\"2023-04-24T08:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":5.1679,\"pv_estimate10\":2.2423,\"pv_estimate90\":6.191,\"period_end\":\"2023-04-24T09:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":5.3669,\"pv_estimate10\":2.2423,\"pv_estimate90\":6.8452,\"period_end\":\"2023-04-24T09:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":5.39,\"pv_estimate10\":2.1449,\"pv_estimate90\":7.312,\"period_end\":\"2023-04-24T10:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":5.2358,\"pv_estimate10\":1.9886,\"pv_estimate90\":7.751,\"period_end\":\"2023-04-24T10:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":4.785,\"pv_estimate10\":1.7612,\"pv_estimate90\":7.953,\"period_end\":\"2023-04-24T11:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":4.2732,\"pv_estimate10\":1.5242,\"pv_estimate90\":8.0782,\"period_end\":\"2023-04-24T11:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.8622,\"pv_estimate10\":1.2696,\"pv_estimate90\":8.1074,\"period_end\":\"2023-04-24T12:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.6116,\"pv_estimate10\":1.101,\"pv_estimate90\":7.973,\"period_end\":\"2023-04-24T12:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.3996,\"pv_estimate10\":0.994,\"pv_estimate90\":7.7084,\"period_end\":\"2023-04-24T13:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.1201,\"pv_estimate10\":1.2803,\"pv_estimate90\":3.8058,\"period_end\":\"2023-04-24T13:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.5953,\"pv_estimate10\":1.0504,\"pv_estimate90\":5.6479,\"period_end\":\"2023-04-24T14:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.6466,\"pv_estimate10\":1.2009,\"pv_estimate90\":6.0763,\"period_end\":\"2023-04-24T14:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.1855,\"pv_estimate10\":0.2264,\"pv_estimate90\":3.8784,\"period_end\":\"2023-04-24T15:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.2207,\"pv_estimate10\":0.3918,\"pv_estimate90\":3.0392,\"period_end\":\"2023-04-24T15:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.0267,\"pv_estimate10\":0.3014,\"pv_estimate90\":2.1439,\"period_end\":\"2023-04-24T16:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.1302,\"pv_estimate10\":0.3771,\"pv_estimate90\":2.1693,\"period_end\":\"2023-04-24T16:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.9882,\"pv_estimate10\":0.2863,\"pv_estimate90\":1.6548,\"period_end\":\"2023-04-24T17:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.6455,\"pv_estimate10\":0.1921,\"pv_estimate90\":0.942,\"period_end\":\"2023-04-24T17:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.2342,\"pv_estimate10\":0.0847,\"pv_estimate90\":0.24591,\"period_end\":\"2023-04-24T18:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.0454,\"pv_estimate10\":0.0151,\"pv_estimate90\":0.047670000000000004,\"period_end\":\"2023-04-24T18:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T19:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T19:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T20:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T20:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T21:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T21:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T22:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T22:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T23:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-24T23:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T00:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T00:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T01:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T01:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T02:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T02:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T03:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T03:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T04:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.0053,\"pv_estimate10\":0,\"pv_estimate90\":0.0107,\"period_end\":\"2023-04-25T04:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.1016,\"pv_estimate10\":0.0428,\"pv_estimate90\":0.128,\"period_end\":\"2023-04-25T05:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.2853,\"pv_estimate10\":0.1268,\"pv_estimate90\":0.299565,\"period_end\":\"2023-04-25T05:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.6996,\"pv_estimate10\":0.2642,\"pv_estimate90\":0.7391,\"period_end\":\"2023-04-25T06:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.1241,\"pv_estimate10\":0.4638,\"pv_estimate90\":1.489,\"period_end\":\"2023-04-25T06:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.5395,\"pv_estimate10\":0.6163,\"pv_estimate90\":2.3859,\"period_end\":\"2023-04-25T07:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.8941,\"pv_estimate10\":0.7446,\"pv_estimate90\":3.2586,\"period_end\":\"2023-04-25T07:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.1381,\"pv_estimate10\":0.8306,\"pv_estimate90\":3.972,\"period_end\":\"2023-04-25T08:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.3692,\"pv_estimate10\":0.9247,\"pv_estimate90\":4.5448,\"period_end\":\"2023-04-25T08:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.6173,\"pv_estimate10\":1.0328,\"pv_estimate90\":5.0972,\"period_end\":\"2023-04-25T09:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.8631,\"pv_estimate10\":1.1584,\"pv_estimate90\":5.6114,\"period_end\":\"2023-04-25T09:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.0901,\"pv_estimate10\":1.2746,\"pv_estimate90\":6.1277,\"period_end\":\"2023-04-25T10:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.207,\"pv_estimate10\":1.3192,\"pv_estimate90\":6.3909,\"period_end\":\"2023-04-25T10:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.207,\"pv_estimate10\":1.3014,\"pv_estimate90\":6.4647,\"period_end\":\"2023-04-25T11:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.3233,\"pv_estimate10\":1.3726,\"pv_estimate90\":6.7487,\"period_end\":\"2023-04-25T11:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.5381,\"pv_estimate10\":1.5499,\"pv_estimate90\":7.1383,\"period_end\":\"2023-04-25T12:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.6038,\"pv_estimate10\":1.5941,\"pv_estimate90\":7.3403,\"period_end\":\"2023-04-25T12:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.5055,\"pv_estimate10\":1.4978,\"pv_estimate90\":7.2899,\"period_end\":\"2023-04-25T13:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.3246,\"pv_estimate10\":1.3741,\"pv_estimate90\":7.0734,\"period_end\":\"2023-04-25T13:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":3.0424,\"pv_estimate10\":1.1876,\"pv_estimate90\":6.5909,\"period_end\":\"2023-04-25T14:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.875,\"pv_estimate10\":1.0983,\"pv_estimate90\":6.2216,\"period_end\":\"2023-04-25T14:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.8551,\"pv_estimate10\":1.101,\"pv_estimate90\":5.674,\"period_end\":\"2023-04-25T15:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.7145,\"pv_estimate10\":1.0029,\"pv_estimate90\":4.8299,\"period_end\":\"2023-04-25T15:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":2.3104,\"pv_estimate10\":0.8148,\"pv_estimate90\":3.9473,\"period_end\":\"2023-04-25T16:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.7812,\"pv_estimate10\":0.6663,\"pv_estimate90\":2.9588,\"period_end\":\"2023-04-25T16:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":1.1977,\"pv_estimate10\":0.4754,\"pv_estimate90\":1.9435,\"period_end\":\"2023-04-25T17:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.671,\"pv_estimate10\":0.2268,\"pv_estimate90\":0.9732,\"period_end\":\"2023-04-25T17:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.2397,\"pv_estimate10\":0.0969,\"pv_estimate90\":0.251685,\"period_end\":\"2023-04-25T18:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0.0516,\"pv_estimate10\":0.0206,\"pv_estimate90\":0.05418,\"period_end\":\"2023-04-25T18:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T19:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T19:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T20:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T20:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T21:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T21:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T22:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T22:30:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T23:00:00.0000000Z\",\"period\":\"PT30M\"},{\"pv_estimate\":0,\"pv_estimate10\":0,\"pv_estimate90\":0,\"period_end\":\"2023-04-25T23:30:00.0000000Z\",\"period\":\"PT30M\"}]}",
+    "payloadType": "json",
+    "x": 110,
+    "y": 160,
+    "wires": [
+      [
+        "d9f83b41aefaa974"
+      ]
+    ]
+  },
+  {
+    "id": "d9f83b41aefaa974",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "hourly pv forecast",
+    "func": "var datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = 'Europe/Berlin'\n\nconst hourlyPvForecasts = {};\nconst result = msg.payload.forecasts.forEach(item => {\n    const periodStartLocalTime = datefnstz.utcToZonedTime(new Date(item.period_end), timeZone);\n    // const key = periodStartLocalTime.toISOString(); //.substring(0, 13);\n    const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n    let estimate = hourlyPvForecasts[key];\n    if (hourlyPvForecasts[key]) {\n        hourlyPvForecasts[key] = (hourlyPvForecasts[key] + item.pv_estimate) / 2;\n    } else {\n        hourlyPvForecasts[key] = item.pv_estimate;\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 790,
+    "y": 100,
+    "wires": [
+      [
+        "3c1d77dcd06ac48b",
+        "698031ac418ee656"
+      ]
+    ]
+  },
+  {
+    "id": "68e8bb452cb6db55",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "trigger tibber query",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{   viewer {     homes {       currentSubscription{         priceInfo{           today {             total             startsAt           }         }       }     }   } }",
+    "payloadType": "str",
+    "x": 150,
+    "y": 260,
+    "wires": [
+      [
+        "d4af6a26fcce30b5"
+      ]
+    ]
+  },
+  {
+    "id": "c4d717c702fba9b0",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "hourly energy price",
+    "func": "var datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.today.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n\n    // clone values for tomorrow (for testing) since the API returns only todays values for non-customers\n    const tomorrow = datefns.addDays(new Date(item.startsAt), 1);\n    const keyTomorrow = tomorrow.toISOString().substring(0, 13);\n    //    hourlyPrice[keyTomorrow] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 790,
+    "y": 260,
+    "wires": [
+      [
+        "c5236fd572f60df7",
+        "698031ac418ee656"
+      ]
+    ]
+  },
+  {
+    "id": "7ad82c270b16a402",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "calculate cost",
+    "func": "const hourlyPvForecasts = msg.payload.hourlyPvForecasts;\nconst hourlyEnergyPrices = msg.payload.hourlyEnergyPrices;\n\nconst estimatedPowerConsumptionKw = flow.get('estimatedPowerConsumption');\n\nconst hourlyEnergyCosts = {};\nif (hourlyEnergyPrices && hourlyPvForecasts && estimatedPowerConsumptionKw) {\n    Object.keys(hourlyEnergyPrices).forEach(key => {\n        const hourlyEnergyPrice = hourlyEnergyPrices[key];\n        const hourlyPvForecast = hourlyPvForecasts[key];\n        //        if (!!hourlyEnergyPrice && !!hourlyPvForecast) {\n        const price = hourlyEnergyPrice * (estimatedPowerConsumptionKw - hourlyPvForecast);\n        hourlyEnergyCosts[key] = price;\n        //}\n    });\n}\n\nvar newMsg = { payload: hourlyEnergyCosts };\nreturn newMsg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 800,
+    "y": 380,
+    "wires": [
+      [
+        "57d358178e243538",
+        "1f2cc1dddf7b1baf"
+      ]
+    ]
+  },
+  {
+    "id": "72f3141fb8bfc57b",
+    "type": "config",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "properties": [
+      {
+        "p": "estimatedPowerConsumption",
+        "pt": "flow",
+        "to": "4.4",
+        "tot": "num"
+      },
+      {
+        "p": "powerConsumptionHours",
+        "pt": "flow",
+        "to": "8",
+        "tot": "num"
+      },
+      {
+        "p": "solcastResourceId",
+        "pt": "flow",
+        "to": "",
+        "tot": "str"
+      },
+      {
+        "p": "solcastApiKey",
+        "pt": "flow",
+        "to": "",
+        "tot": "str"
+      },
+      {
+        "p": "tibberAuthorizationToken",
+        "pt": "flow",
+        "to": "",
+        "tot": "str"
+      }
+    ],
+    "active": true,
+    "x": 110,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "57d358178e243538",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "choose cost efficient hours",
+    "func": "const powerConsumptionHours = flow.get('powerConsumptionHours');\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nconst hourlyCostSorted = new Map([...hourlyCost.entries()].sort((a, b) => a[1] - b[1]));\n\nconst hourlyCostSelected = new Map();\nhourlyCostSorted.forEach((value, key) => {\n    hourlyCostSelected.size < powerConsumptionHours && hourlyCostSelected.set(key, value)\n});\n\nconst hourlyCostSelectedSorted = new Map([...hourlyCostSelected.entries()].sort());\n\nvar newMsg = {payload: [...hourlyCostSelectedSorted.keys()]};\nreturn newMsg;\n",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 820,
+    "y": 500,
+    "wires": [
+      [
+        "155225f6120582e9",
+        "7b57b21785009960"
+      ]
+    ]
+  },
+  {
+    "id": "262b4e2ca86f41ef",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "test",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"data\":{\"viewer\":{\"homes\":[{\"currentSubscription\":{\"priceInfo\":{\"today\":[{\"total\":0.9459,\"startsAt\":\"2023-04-24T00:00:00.000+02:00\"},{\"total\":0.8286,\"startsAt\":\"2023-04-24T01:00:00.000+02:00\"},{\"total\":0.746,\"startsAt\":\"2023-04-24T02:00:00.000+02:00\"},{\"total\":0.7164,\"startsAt\":\"2023-04-24T03:00:00.000+02:00\"},{\"total\":0.7249,\"startsAt\":\"2023-04-24T04:00:00.000+02:00\"},{\"total\":0.7422,\"startsAt\":\"2023-04-24T05:00:00.000+02:00\"},{\"total\":0.945,\"startsAt\":\"2023-04-24T06:00:00.000+02:00\"},{\"total\":1.1322,\"startsAt\":\"2023-04-24T07:00:00.000+02:00\"},{\"total\":1.1475,\"startsAt\":\"2023-04-24T08:00:00.000+02:00\"},{\"total\":0.9286,\"startsAt\":\"2023-04-24T09:00:00.000+02:00\"},{\"total\":0.7488,\"startsAt\":\"2023-04-24T10:00:00.000+02:00\"},{\"total\":0.6198,\"startsAt\":\"2023-04-24T11:00:00.000+02:00\"},{\"total\":0.6112,\"startsAt\":\"2023-04-24T12:00:00.000+02:00\"},{\"total\":0.4697,\"startsAt\":\"2023-04-24T13:00:00.000+02:00\"},{\"total\":0.3138,\"startsAt\":\"2023-04-24T14:00:00.000+02:00\"},{\"total\":0.3189,\"startsAt\":\"2023-04-24T15:00:00.000+02:00\"},{\"total\":0.4109,\"startsAt\":\"2023-04-24T16:00:00.000+02:00\"},{\"total\":0.5778,\"startsAt\":\"2023-04-24T17:00:00.000+02:00\"},{\"total\":0.6235,\"startsAt\":\"2023-04-24T18:00:00.000+02:00\"},{\"total\":0.6224,\"startsAt\":\"2023-04-24T19:00:00.000+02:00\"},{\"total\":0.6143,\"startsAt\":\"2023-04-24T20:00:00.000+02:00\"},{\"total\":0.5922,\"startsAt\":\"2023-04-24T21:00:00.000+02:00\"},{\"total\":0.4052,\"startsAt\":\"2023-04-24T22:00:00.000+02:00\"},{\"total\":0.2612,\"startsAt\":\"2023-04-24T23:00:00.000+02:00\"}]}}}]}}}",
+    "payloadType": "json",
+    "x": 110,
+    "y": 320,
+    "wires": [
+      [
+        "c4d717c702fba9b0"
+      ]
+    ]
+  },
+  {
+    "id": "c57e2ce21a60b90e",
+    "type": "ui_chart",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "group": "5fe71c3fd07a84a7",
+    "order": 2,
+    "width": "0",
+    "height": "0",
+    "label": "PV Forecast",
+    "chartType": "line",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#aec7e8",
+      "#ff7f0e",
+      "#2ca02c",
+      "#98df8a",
+      "#d62728",
+      "#ff9896",
+      "#9467bd",
+      "#c5b0d5"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 1150,
+    "y": 160,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "3c1d77dcd06ac48b",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "generate pv forecast chart",
+    "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).slice(0, 24).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data:[data], labels}]};",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1150,
+    "y": 100,
+    "wires": [
+      [
+        "c57e2ce21a60b90e"
+      ]
+    ]
+  },
+  {
+    "id": "c5236fd572f60df7",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "generate hourly energy price chart",
+    "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data: [data], labels }] };",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1160,
+    "y": 260,
+    "wires": [
+      [
+        "ca3d916f62f8ea22"
+      ]
+    ]
+  },
+  {
+    "id": "ca3d916f62f8ea22",
+    "type": "ui_chart",
+    "z": "53909232bb435dbf",
+    "name": "Hourly energy price",
+    "group": "5fe71c3fd07a84a7",
+    "order": 3,
+    "width": 0,
+    "height": 0,
+    "label": "Hourly energy price",
+    "chartType": "line",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#aec7e8",
+      "#ff7f0e",
+      "#2ca02c",
+      "#98df8a",
+      "#d62728",
+      "#ff9896",
+      "#9467bd",
+      "#c5b0d5"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 1170,
+    "y": 320,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "cf8da99148e193d4",
+    "type": "ui_chart",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "group": "5fe71c3fd07a84a7",
+    "order": 4,
+    "width": 0,
+    "height": 0,
+    "label": "Hourly cost",
+    "chartType": "line",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#aec7e8",
+      "#ff7f0e",
+      "#2ca02c",
+      "#98df8a",
+      "#d62728",
+      "#ff9896",
+      "#9467bd",
+      "#c5b0d5"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 1150,
+    "y": 440,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "1f2cc1dddf7b1baf",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "generate hourly cost chart",
+    "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data: [data], labels }] };",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1150,
+    "y": 380,
+    "wires": [
+      [
+        "cf8da99148e193d4"
+      ]
+    ]
+  },
+  {
+    "id": "155225f6120582e9",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "generate most cost efficient hours chart",
+    "func": "const data = [];\nconst labels = [];\n/*\nObject.keys(msg.payload).forEach(key => {\n    data.push(1);\n    labels.push(Number(key.substring(11)));\n});\n*/\n\nconst selectedHours = [];\n//Object.keys(msg.payload).forEach(key => selectedHours.push(key.toString()));\nmsg.payload.forEach(key => selectedHours.push(Number(key.substring(11))));\n\nfor(let hour=0; hour<24; hour++) {\n    data.push(selectedHours.indexOf(hour) > -1 ? 1 : 0);\n    labels.push(hour);\n}\nreturn { payload: [{ series: ['X'], data: [data], labels }] };\n//return { payload: selectedHours };",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1140,
+    "y": 500,
+    "wires": [
+      [
+        "15aabdd2187c0470"
+      ]
+    ]
+  },
+  {
+    "id": "15aabdd2187c0470",
+    "type": "ui_chart",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "group": "5fe71c3fd07a84a7",
+    "order": 5,
+    "width": 0,
+    "height": 0,
+    "label": "Most cost efficient hours",
+    "chartType": "bar",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": true,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#aec7e8",
+      "#ff7f0e",
+      "#2ca02c",
+      "#98df8a",
+      "#d62728",
+      "#ff9896",
+      "#9467bd",
+      "#c5b0d5"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 1150,
+    "y": 560,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "7b57b21785009960",
+    "type": "change",
+    "z": "53909232bb435dbf",
+    "name": "store cost efficient hours",
+    "rules": [
+      {
+        "t": "set",
+        "p": "costEfficientHours",
+        "pt": "flow",
+        "to": "payload",
+        "tot": "msg"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 830,
+    "y": 560,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "d0b6a9be55b0e0b2",
+    "type": "debug",
+    "z": "53909232bb435dbf",
+    "name": "result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1130,
+    "y": 780,
+    "wires": []
+  },
+  {
+    "id": "9c7f7856a66ced5a",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "hourlyRun",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 740,
+    "wires": [
+      [
+        "b55dbfacaaa2e6ea",
+        "d3a56c54933e3010"
+      ]
+    ]
+  },
+  {
+    "id": "b55dbfacaaa2e6ea",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "generate date from cache",
+    "func": "const hourlyPvForecasts = flow.get('costEfficientHours');\n\n\nreturn { payload: hourlyPvForecasts.length ? hourlyPvForecasts[0].substring(0, 10) : undefined};",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 950,
+    "y": 680,
+    "wires": [
+      [
+        "a9257c5fd597c372"
+      ]
+    ]
+  },
+  {
+    "id": "a9257c5fd597c372",
+    "type": "ui_text",
+    "z": "53909232bb435dbf",
+    "group": "5fe71c3fd07a84a7",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "name": "",
+    "label": "Date",
+    "format": "{{msg.payload}}",
+    "layout": "row-left",
+    "className": "",
+    "x": 1130,
+    "y": 680,
+    "wires": []
+  },
+  {
+    "id": "d3a56c54933e3010",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "is selected hour?",
+    "func": "const hourlyPvForecasts = flow.get('costEfficientHours');\n\nconst now = new Date(msg.payload);\nconst key = now.toISOString().substring(0, 13);\nconst isSelectedHour = hourlyPvForecasts.indexOf(key) > -1;\n\nreturn { payload: isSelectedHour};\n",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 570,
+    "y": 740,
+    "wires": [
+      [
+        "d0b6a9be55b0e0b2",
+        "41bc89f8cecbe752"
+      ]
+    ]
+  },
+  {
+    "id": "5e8ffbce4a4517f0",
+    "type": "inject",
+    "z": "53909232bb435dbf",
+    "name": "test",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "2023-04-24T10:00:00.000Z",
+    "payloadType": "str",
+    "x": 110,
+    "y": 680,
+    "wires": [
+      [
+        "d3a56c54933e3010",
+        "b55dbfacaaa2e6ea"
+      ]
+    ]
+  },
+  {
+    "id": "41bc89f8cecbe752",
+    "type": "pi-gpiod out",
+    "z": "53909232bb435dbf",
+    "d": true,
+    "name": "",
+    "host": "localhost",
+    "port": 8888,
+    "pin": "17",
+    "set": "",
+    "level": "0",
+    "out": "out",
+    "sermin": "1000",
+    "sermax": "2000",
+    "freq": "800",
+    "x": 1140,
+    "y": 740,
+    "wires": []
+  },
+  {
+    "id": "698031ac418ee656",
+    "type": "join",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "mode": "custom",
+    "build": "object",
+    "property": "payload",
+    "propertyType": "msg",
+    "key": "topic",
+    "joiner": "\\n",
+    "joinerType": "str",
+    "accumulate": false,
+    "timeout": "",
+    "count": "2",
+    "reduceRight": false,
+    "reduceExp": "",
+    "reduceInit": "",
+    "reduceInitType": "",
+    "reduceFixup": "",
+    "x": 990,
+    "y": 180,
+    "wires": [
+      [
+        "7ad82c270b16a402"
+      ]
+    ]
+  },
+  {
+    "id": "74baf2009a51d306",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "prepare HTP request",
+    "func": "const solcastResourceId = flow.get('solcastResourceId');\nconst solcastApiKey = flow.get('solcastApiKey');\nreturn { url: `https://api.solcast.com.au/rooftop_sites/${solcastResourceId}/forecasts?format=json&api_key=${solcastApiKey}`};",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 360,
+    "y": 100,
+    "wires": [
+      [
+        "b29b435b87b59072"
+      ]
+    ]
+  },
+  {
+    "id": "84d4c93abcdeb85e",
+    "type": "http request",
+    "z": "53909232bb435dbf",
+    "name": "",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "https://api.tibber.com/v1-beta/gql",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [
+      {
+        "keyType": "Authorization",
+        "keyValue": "",
+        "valueType": "msg",
+        "valueValue": "authorization"
+      },
+      {
+        "keyType": "Content-Type",
+        "keyValue": "",
+        "valueType": "other",
+        "valueValue": "application/json"
+      }
+    ],
+    "x": 550,
+    "y": 260,
+    "wires": [
+      [
+        "c4d717c702fba9b0"
+      ]
+    ]
+  },
+  {
+    "id": "d4af6a26fcce30b5",
+    "type": "function",
+    "z": "53909232bb435dbf",
+    "name": "prepare HTP request",
+    "func": "return {\n  authorization: `Bearer ${flow.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {today {total startsAt}}}}}}\"}'\n};",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 360,
+    "y": 260,
+    "wires": [
+      [
+        "84d4c93abcdeb85e"
+      ]
+    ]
+  },
+  {
+    "id": "5fe71c3fd07a84a7",
+    "type": "ui_group",
+    "name": "Default",
+    "tab": "a4cb99d3ee80a04f",
+    "order": 1,
+    "disp": false,
+    "width": "6",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "a4cb99d3ee80a04f",
+    "type": "ui_tab",
+    "name": "Home",
+    "icon": "dashboard",
+    "disabled": false,
+    "hidden": false
+  }
+]
