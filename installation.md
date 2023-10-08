@@ -1,0 +1,64 @@
+# Installation ohne Docker
+Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügt wird und dessen Passwort auch gesetzt ist:
+
+```bash
+$ sudo useradd -d /opt/nodered -m -s /bin/bash nodered
+$ sudo usermod -a -G sudo nodered
+$ sudo passwd nodered
+```
+
+Ab jetzt sollte mit diesem User gearbeitet werden.
+
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Aus diesem Grund sollte die Installation von Node-RED und node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+
+```bash
+nodered@raspberrypi ~ $ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+Running Node-RED install for user nodered at /opt/nodered on raspbian
+
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for nodered: 
+
+This can take 20-30 minutes on the slower Pi versions - please wait.
+
+  Stop Node-RED                       ✔
+  Remove old version of Node-RED      ✔
+  Remove old version of Node.js       ✔   
+  Install Node.js 18 LTS              ✔   v18.18.0   Npm 9.8.1
+  Clean npm cache                     ✔
+  Install Node-RED core               ✔   3.1.0
+  Move global nodes to local          -
+  Npm rebuild existing nodes          ✔
+  Install extra Pi nodes              ✔
+  Add shortcut commands               ✔
+  Update systemd script               ✔
+                                      
+
+Any errors will be logged to   /var/log/nodered-install.log
+All done.
+You can now start Node-RED with the command  node-red-start
+  or using the icon under   Menu / Programming / Node-RED
+Then point your browser to localhost:1880 or http://{your_pi_ip-address}:1880
+
+Started :  Sun Oct  8 15:47:05 CEST 2023 
+Finished:  Sun Oct  8 15:50:32 CEST 2023
+```
+
+Zum Starten eignet sich folgender Befehl:
+
+```bash
+$ sudo systemctl start nodered
+```
+
+Damit Node-RED beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+
+```bash
+$ sudo systemctl enable nodered
+Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → /lib/systemd/system/nodered.service.
+```
