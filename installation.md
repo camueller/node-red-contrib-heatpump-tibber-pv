@@ -1,4 +1,5 @@
-# Installation ohne Docker
+# Installation
+## Installation ohne Docker
 Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügt wird und dessen Passwort auch gesetzt ist:
 
 ```bash
@@ -61,4 +62,26 @@ Damit Node-RED beim Systemstart ebenfalls gestartet wird (via Systemd), muss fol
 ```bash
 $ sudo systemctl enable nodered
 Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → /lib/systemd/system/nodered.service.
+```
+
+# Installation benötigter Bibliotheken
+Folgende Module müssen über `Manage Palette -> Install` installiert werden:
+- `node-red-contrib-config`
+- `node-red-dashboard`
+
+Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
+- `date-fns`
+
+Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangenen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetzt wird:
+
+```bash
+$ npm i <name>
+```
+
+Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` (Docker: `/data/settings.js`) eingetragen werden. Dazu in der Datei nach `functionGlobalContext`) suchen und wie folgt ändern:
+
+```javascript
+functionGlobalContext: {                                                         
+  datefns:require('date-fns')                                                  
+},
 ```
