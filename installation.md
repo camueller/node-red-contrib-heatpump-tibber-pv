@@ -10,7 +10,7 @@ $ sudo passwd nodered
 
 Ab jetzt sollte mit diesem User gearbeitet werden.
 
-Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Aus diesem Grund sollte die Installation von Node-RED und node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen:
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Aus diesem Grund sollte die Installation von Node-RED und node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen, wobei die Frage nach der Installation Pi-spezifischer Nodes bejaht werden sollte:
 
 ```bash
 nodered@raspberrypi ~ $ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
@@ -85,3 +85,16 @@ functionGlobalContext: {
   datefns:require('date-fns')                                                  
 },
 ```
+
+# Flow-Import
+Der Import der Flows in Node-RED erfolgt über das Menü `Import`. Nach Klick in den zentralen, roten Bereich des Import-Dialoges kann dort das [Flow-JSON für Heatpump-Tibber-PV](https://raw.githubusercontent.com/camueller/node-red-contrib-heatpump-tibber-pv/main/flow.json) eingefügt werden. Durch Klicken des `Import`-Buttons werden die Flows in Node-RED importiert. 
+
+# Konfiguration
+## Config
+TBD
+
+## Solid State Relay
+Der Node `Solid State Relay` verwendet einen GPIO-Port des Raspberry Pi, um das Solid State Relay zu schalten. Am Node selbst muss der verwendete Pin konfiguriert werden.
+
+# Deploy
+Wenn zuvor alle benötigten Bibliotheken installiert wurden, sollten dabei keine Fehler auftreten.
