@@ -40,14 +40,4 @@ Im Diagramm *Most cost efficient hours* werden die Stunden angezeigt, in denen d
 
 Oberhalb der Diagramme wird das **Datum angezeigt**, für das die Stunden mit den geringsten Stromkosten gewählt wurden. Es sollte immen mit dem aktuellen Datum übereinstimmen.
 
-## Installation
-... folgt noch
-
-## Konfiguration
-... folgt noch
-
-## Node-RED starten
-Beim Starten von Node-RED muss die Zeitzone gesetzt werden:
-```console
-docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered -e TZ=Europe/Berlin nodered/node-red
-```
+[Installation und Konfiguration](installation.md)
