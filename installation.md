@@ -71,6 +71,7 @@ Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 
 Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
 - `date-fns`
+- `date-fns-tz`
 
 Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangenen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetzt wird:
 
@@ -82,7 +83,8 @@ Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` (Dock
 
 ```javascript
 functionGlobalContext: {                                                         
-  datefns:require('date-fns')                                                  
+  datefns:require('date-fns'),
+  datefnstz:require('date-fns-tz')                                     
 },
 ```
 
