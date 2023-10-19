@@ -630,7 +630,7 @@
     "type": "function",
     "z": "53909232bb435dbf",
     "name": "is selected hour?",
-    "func": "const hourlyPvForecasts = flow.get('costEfficientHours');\n\nconst now = new Date(msg.payload);\nconst key = now.toISOString().substring(0, 13);\nconst isSelectedHour = hourlyPvForecasts.indexOf(key) > -1;\n\nreturn { payload: isSelectedHour};\n",
+    "func": "var datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = 'Europe/Berlin'\nconst now = datefnstz.utcToZonedTime(new Date(msg.payload), timeZone);\n\nconst hourlyPvForecasts = flow.get('costEfficientHours');\n\nconst key = datefns.format(now, "yyyy-MM-dd'T'HH");\nconst isSelectedHour = hourlyPvForecasts.indexOf(key) > -1;\n\nreturn { payload: isSelectedHour };\n",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
