@@ -88,6 +88,17 @@ functionGlobalContext: {
 },
 ```
 
+# Zeitzone
+Damit die Berechnungen funktionieren, muss die Zeitzone in Node-RED richtig gesetzt sein.
+Wird Node-RED ohne Docker verwendet, muss dazu in der Datei `~/.node-red/settings.js` oberhalb von `module.exports = {` eingetragen werden:
+```
+process.env.TZ = "Europe/Berlin"
+```
+Bei Verwendung von Docker wird stattdessen die Variable TZ beim Starten des Containers gesetzt:
+```
+docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered -e TZ=Europe/Berlin nodered/node-red
+```
+
 # Flow-Import
 Der Import der Flows in Node-RED erfolgt über das Menü `Import`. Nach Klick in den zentralen, roten Bereich des Import-Dialoges kann dort das [Flow-JSON für Heatpump-Tibber-PV](https://raw.githubusercontent.com/camueller/node-red-contrib-heatpump-tibber-pv/main/flow.json) eingefügt werden. Durch Klicken des `Import`-Buttons werden die Flows in Node-RED importiert. 
 
