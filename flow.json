@@ -210,6 +210,12 @@
                 "pt": "flow",
                 "to": "",
                 "tot": "str"
+            },
+            {
+                "p": "mandatoryHours",
+                "pt": "flow",
+                "to": "[[1,5],[2,5],[3,5],[4,5],[5,5],[6,8],[0,8]]",
+                "tot": "json"
             }
         ],
         "active": true,
@@ -222,8 +228,9 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "choose cost efficient hours",
-        "func": "const powerConsumptionHours = flow.get('powerConsumptionHours');\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nconst hourlyCostSorted = new Map([...hourlyCost.entries()].sort((a, b) => a[1] - b[1]));\n\nconst hourlyCostSelected = new Map();\nhourlyCostSorted.forEach((value, key) => {\n    hourlyCostSelected.size < powerConsumptionHours && hourlyCostSelected.set(key, value)\n});\n\nconst hourlyCostSelectedSorted = new Map([...hourlyCostSelected.entries()].sort());\n\nvar newMsg = {payload: [...hourlyCostSelectedSorted.keys()]};\nreturn newMsg;\n",
+        "func": "var datefns = global.get('datefns');\n\nconst powerConsumptionHours = flow.get('powerConsumptionHours');\nconst mandatoryHours = flow.get('mandatoryHours');\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nconst hourlyCostSorted = new Map([...hourlyCost.entries()].sort((a, b) => a[1] - b[1]));\n\nconst dow = datefns.getDay(new Date(\n    Number.parseInt(hourKeys[0].substring(0, 4)),\n    Number.parseInt(hourKeys[0].substring(5, 7)) - 1,\n    Number.parseInt(hourKeys[0].substring(8, 10))\n));\n\nconst hourlyCostSelected = new Map();\nif (mandatoryHours) {\n    mandatoryHours.forEach(entry => {\n        let hour;\n        if (Array.isArray(entry)) {\n            if (entry.length === 2) {\n                if (entry[0] === dow) {\n                    hour = entry[1];\n                }\n            } else {\n                hour = entry[1];\n            }\n        } else {\n            hour = entry;\n        }\n        if (hour) {\n            const mandatoryHourKey = hourKeys[0].substring(0, 11) + (hour < 10 ? `0${hour}` : hour);\n            hourlyCostSelected.set(mandatoryHourKey, 0);\n        }\n    });\n}\n\nhourlyCostSorted.forEach((value, key) => {\n    hourlyCostSelected.size < powerConsumptionHours && hourlyCostSelected.set(key, value)\n});\n\nconst hourlyCostSelectedSorted = new Map([...hourlyCostSelected.entries()].sort());\n\nreturn {payload: [...hourlyCostSelectedSorted.keys()]};\n",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -595,8 +602,9 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "generate date from cache",
-        "func": "const hourlyPvForecasts = flow.get('costEfficientHours');\n\n\nreturn { payload: hourlyPvForecasts.length ? hourlyPvForecasts[0].substring(0, 10) : undefined};",
+        "func": "var datefns = global.get('datefns');\n\nconst now = global.get('toZonedDate')(new Date(msg.payload));\n\nreturn { payload: datefns.format(now, \"dd.MM.yyyy - HH' Uhr'\") };",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
