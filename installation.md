@@ -66,6 +66,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → 
 
 # Installation benötigter Bibliotheken
 Folgende Module müssen über `Manage Palette -> Install` installiert werden:
+- `node-red-contrib-cron-plus`
 - `node-red-contrib-config`
 - `node-red-dashboard`
 
