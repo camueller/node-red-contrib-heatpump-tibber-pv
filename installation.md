@@ -69,6 +69,7 @@ Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 - `node-red-contrib-cron-plus`
 - `node-red-contrib-config`
 - `node-red-dashboard`
+- `node-red-contrib-ui-led`
 
 Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
 - `date-fns`
