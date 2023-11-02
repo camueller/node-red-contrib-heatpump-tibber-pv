@@ -13,7 +13,11 @@ Folgende Vorausstzungen müssen vorliegen:
 ### Überblick
 Wenn eine Wärmepumpe (insbesondere solche mit großem Pufferspeicher) nur eine feste, **maximale Anzahl von Stunden täglich** (bei mit 8 Stunden) einschalten darf, ist es sinnvoll, dafür die **Stunden mit den geringstmöglichen Stromkosten** zu wählen.
 
-Dazu müssen am Ende eines Tages die **Stromkosten für jede Stunde des Folgetages berechnet** werden. Von der Leistungsaufnahme der Wärmepumpe wird zunächst die **prognostizierte Leistung der PV-Anlage** abgezogen. Die **verbleibende Leistungsaufnahme** (falls positiv) wird mit dem **zu dieser Stunde gültigen Preis** bewertet. Entsprechend der gewünschten **maximalen Anzahl von täglichen Betriebsstunden der Wärmepumpe** werden die **Stunden mit den geringsten Stromkosten gewählt**. Zu Beginn jeder Stunde wird das **Signal zum Ein- oder Ausschalten** an die Wärmepumpe gesendet.  
+Dazu müssen die **Stromkosten für jede Stunde eines Tages berechnet** werden wie folgt: Von der **Leistungsaufnahme der Wärmepumpe** wird zunächst die **prognostizierte Leistung der PV-Anlage** abgezogen. Die Energie für diese **verbleibende Leistungsaufnahme** (falls positiv) muss gekauft werden und wird mit dem **zu dieser Stunde gültigen Preis** bewertet. Zu diesen Kosten muss allerdings noch der **Verzicht auf die Einspeisevergütung** für die **prognostizierte Leistung der PV-Anlage** addiert werden, damit die Kosten von Stunden mit PV-Leistung und solchen ohne PV-Leistung vergleichbar sind.
+
+Entsprechend der gewünschten **maximalen Anzahl von täglichen Betriebsstunden der Wärmepumpe** werden die **Stunden mit den geringsten Stromkosten gewählt**. Es lassen sich optional Stunden (auch mit Wochentagbezug) definieren, die unabhängig von de Stromkosten gewählt werden.
+
+Zu Beginn jeder Stunde wird geprüft, ob diese Stunde als kostengünstig klassifiziert wurde. Dementsprechend wird das **Signal zum Ein- oder Ausschalten** an die Wärmepumpe gesendet.
 
 ### Prognose der Leistung der PV-Anlage
 Zur Prognose der Leistung der PV-Anlage wird der der Dienst [Solcast](https://solcast.com/) verwendet, der diese [kostenlos für Hauseigentümer mit Dachsolaranlagen bereitstellt](https://solcast.com/free-rooftop-solar-forecasting). Dafür muss man sich einen **kostenlosen Account** anlegen, bei dem Angaben zur  Lage, Ausrichtung und Leistung der PV-Anlage gemacht werden müssen. Die für die Anlage vergebende Resource Id sowie der API-Key müssen in der Flow-Configuration angegeben werden.
