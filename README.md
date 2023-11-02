@@ -34,14 +34,21 @@ Die oben beschriebene Funktionsweise wird durch [folgenden Flow](flow.json) erre
 Die Visualisierung des Flows über das Dashboard zeigt mehrere Diaggramme für den Tag:
 ![Dashboard](dashboard.png)
 
-In *PV Forecast* wird die prognostizierte, stündliche Leistung der PV-Anlage in kW gezeigt.
+Ganz oben wird das Zeitfenster angezeigt, das für die letzte Prüfung auf die kostengünstigesten Stunden verwendet wurde. Das sollte immer die aktuelle Stunde sein. 
 
-Das Diagramm *Hourly energy price* zeigt den stündlichen Preis für eine kWh.
+Darunter wird der aktuelle Schaltzustand angeigt, d.h. wenn das aktuell Zeitfenster als kostengünstig klassifiziert wurde, sollte ein gründes Licht anzeigen, dass der Schalter eingeschaltet ist.
 
-Unter Berücksichtgung der Leistungsaufnahme der Wärmepumpe, der prognostizierten Leistung der PV-Anlage und der stündlichen Strompreise zeigt das Diagramm *Hourly cost* die Stromkosten.
+Im Diagramm *PV-Prognose* wird die prognostizierte, stündliche Leistung der PV-Anlage in kW gezeigt. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten oder eine Fehlermeldung, falls die Werte nicht abgerufen werden konnten.
 
-Im Diagramm *Most cost efficient hours* werden die Stunden angezeigt, in denen die Wärmepumpe einschalten darf, damit die geringsten Stunden genutzt werden.
+Das Diagramm *Strompreis* zeigt den stündlichen Preis für eine kWh an. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten.
 
-Oberhalb der Diagramme wird das **Datum angezeigt**, für das die Stunden mit den geringsten Stromkosten gewählt wurden. Es sollte immen mit dem aktuellen Datum übereinstimmen.
+Unter Berücksichtgung 
+- der Leistungsaufnahme der Wärmepumpe
+- der prognostizierten Leistung der PV-Anlage
+- der stündlichen Strompreise
+- der Einspeisevergütung
+zeigt das Diagramm *Stromkosten* selbige an.
+
+Im Diagramm *Kostengünstigste Stunden* werden die Stunden angezeigt, in die als kostengünstig klassifiziert wurden und in denen die Wärmepumpe einschalten darf.
 
 [Installation und Konfiguration](installation.md)
