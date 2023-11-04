@@ -1,5 +1,4 @@
 # Installation
-## Installation ohne Docker
 Für Node-RED sollte ein eigener User verwendet werden, der zur `sudo`-Gruppe hinzugefügt wird und dessen Passwort auch gesetzt ist:
 
 ```bash
@@ -71,7 +70,7 @@ Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 - `node-red-dashboard`
 - `node-red-contrib-ui-led`
 
-Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` (Docker: `/data`) befindet:
+Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` befindet:
 - `date-fns`
 - `date-fns-tz`
 
@@ -81,7 +80,7 @@ Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangenen Liste
 $ npm i <name>
 ```
 
-Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` (Docker: `/data/settings.js`) eingetragen werden. Dazu in der Datei nach `functionGlobalContext`) suchen und wie folgt ändern:
+Die Bibliothek `date-fns` muss noch in der Datei `~/.node-red/settings.js` eingetragen werden. Dazu in der Datei nach `functionGlobalContext`) suchen und wie folgt ändern:
 
 ```javascript
 functionGlobalContext: {                                                         
@@ -95,10 +94,6 @@ Damit die Berechnungen funktionieren, muss die Zeitzone in Node-RED richtig gese
 Wird Node-RED ohne Docker verwendet, muss dazu in der Datei `~/.node-red/settings.js` oberhalb von `module.exports = {` eingetragen werden:
 ```
 process.env.TZ = "Europe/Berlin"
-```
-Bei Verwendung von Docker wird stattdessen die Variable TZ beim Starten des Containers gesetzt:
-```
-docker run -it --rm -p 1880:1880 -v node_red_data:/data --name nodered -e TZ=Europe/Berlin nodered/node-red
 ```
 
 # Flow-Import
