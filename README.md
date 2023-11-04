@@ -54,6 +54,7 @@ Unter Berücksichtgung
 - der prognostizierten Leistung der PV-Anlage
 - der stündlichen Strompreise
 - der Einspeisevergütung
+
 zeigt das Diagramm die stündlichen **Stromkosten** entsprechend der konfigurierten *Leistungsaufnahme der Wärmepumpe* an.
 
 Im Diagramm **Kostengünstigste Stunden** werden entsprechend der *maximalen Anzahl von täglichen Betriebsstunden* diejenigen Stunden angezeigt, die als kostengünstig klassifiziert wurden oder Pflichtstunden sind. In diesen Stunden darf die Wärmepumpe einschalten. Im Bild sind zwar die Kosten für die Zeit ab 20 Uhr (83.7 Cent) geringer als um 8 Uhr (89.5 Cent), aber 8 Uhr ist Samstags bei mir als Pflichtstunde konfiguriert.
