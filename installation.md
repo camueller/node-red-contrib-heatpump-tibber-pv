@@ -9,7 +9,7 @@ $ sudo passwd nodered
 
 Ab jetzt sollte mit diesem User gearbeitet werden.
 
-Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js, wobei letztere möglicherweise deshalb nicht in der lage dazu ist, Bibliotheken direkt von `github` zu installieren. Aus diesem Grund sollte die Installation von Node-RED und node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen, wobei die Frage nach der Installation Pi-spezifischer Nodes bejaht werden sollte:
+Node-RED kann über das Raspbian-Repository mit `apt install ...` installiert werden, aber man erhält dann eine veraltete Version von Node-RED und Node.js. Aus diesem Grund sollte die Installation von Node-RED und node.js entsprechend der [Anleitung auf der Node-RED-Homepage](https://nodered.org/docs/getting-started/raspberrypi) erfolgen, wobei die Frage nach der Installation Pi-spezifischer Nodes bejaht werden sollte:
 
 ```bash
 nodered@raspberrypi ~ $ bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
@@ -91,7 +91,7 @@ functionGlobalContext: {
 
 # Zeitzone
 Damit die Berechnungen funktionieren, muss die Zeitzone in Node-RED richtig gesetzt sein.
-Wird Node-RED ohne Docker verwendet, muss dazu in der Datei `~/.node-red/settings.js` oberhalb von `module.exports = {` eingetragen werden:
+Dazu muss in der Datei `~/.node-red/settings.js` oberhalb von `module.exports = {` eingetragen werden:
 ```
 process.env.TZ = "Europe/Berlin"
 ```
@@ -101,7 +101,19 @@ Der Import der Flows in Node-RED erfolgt über das Menü `Import`. Nach Klick in
 
 # Konfiguration
 ## Config
-TBD
+Dieser Flow verwendet einen **Config**-Node zur Konfiguration der folgenden **Pflicht-Parameter**:
+
+- `estimatedPowerConsumption`: die geschätzte Leistungsaufnahme der Wärmepumpe in kW (z.B. 4.4)
+- `powerConsumptionHours`: die maximale Anzahl der Stunden, in denen die Wärmepumpe täglich laufen  soll (z.B. 8)
+- `solcastResourceId`: die von [Solcast](https://solcast.com/) für die Anlage vergebene Resource Id (sieht so aus, wobei die "x" für Ziffern/Buchstaben stehen: xxxx-xxxx-xxxx-xxxx)
+- `solcastApiKey`: der bei [Solcast](https://solcast.com/) generierte API key
+- `tibberAuthorizationToken`: der bei [Tibber Developer](https://developer.tibber.com/settings/access-token generierte Access Token für die Scopes`tibber_graph` und `price`
+- `feedInTariff`: die Einspeisevergütung inkl. MwSt. in Euro/KWh (z.B. 0.1231)
+
+ Zusätzlich können folgende **optionale Parameter** gesetzt werden:
+- `mandatoryHours`: die Pflichtstunden (als Teil der maximalen Anzahl der Stunden), in denen die Wärmepumpe unabhängig vom Preis laufen soll. Der Wert muss als Array angegeben werden, wobei ein Array-Element
+  - als Zahl angegeben wird für tägliche Gültigkeit (z.B. [8] für 8 Uhr)
+  - als Array mit 2 Elementen angegeben wird für Gültigkeit mit Wochentagbezug, wobei Sonntag=0, Montag=1, Dienstag=2, Mittwoch=3, Donnerstag=4, Freitag=5, Samstag=6 (z.B. [0,8] für Sonntags 8 Uhr)
 
 ## Solid State Relay
 Der Node `Solid State Relay` verwendet einen GPIO-Port des Raspberry Pi, um das Solid State Relay zu schalten. Am Node selbst muss der verwendete Pin konfiguriert werden.

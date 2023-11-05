@@ -4,7 +4,7 @@ Steuerung einer Wärmepumpe zur Erzielung geringstmöglicher Stromkosten durch N
 
 ## Voraussetzungen
 Folgende Vorausstzungen müssen vorliegen:
-- steuerbare Wärmepumpe (z.B. EVU-Signal-Simulation)
+- Wärmepumpe, die über EVU-Sperre gesteuert werden kann
 - PV-Anlage
 - Strombezug durch [Tibber](https://tibber.com/) mit stündlichen Preisen
 - Raspberry Pi (mit Anpassungen auch  Server oder NAS) auf dem [Node-RED](https://nodered.org/) läuft
@@ -20,6 +20,13 @@ Von der **Leistungsaufnahme der Wärmepumpe** wird zunächst die **prognostizier
 Entsprechend der gewünschten **maximalen Anzahl von täglichen Betriebsstunden der Wärmepumpe** werden die **Stunden mit den geringsten Stromkosten gewählt**. Es lassen sich **optional Pflichtstunden** (auch mit Wochentagbezug) definieren, die unabhängig von den Stromkosten gewählt werden.
 
 **Zu Beginn jeder Stunde** wird geprüft, ob diese Stunde als kostengünstig klassifiziert wurde. Dementsprechend wird das **Signal zum Ein- oder Ausschalten** an die Wärmepumpe gesendet.
+
+### Wärmepumpe
+Normalerweise dient die **EVU-Sperre** dazu, dass der Energieversorger die Wärmepumpe zu Spitzenlastzeiten (in der Regel maximal 3x täglich für 2 Stunden) abschalten kann. Dazu ist in der Wärmepumpe ein Relais verbaut, dessen Kontakte geöffnet werden, wenn die Wärempumpe nicht laufen soll.
+
+Bei der **Steuerung über Node-RED** darf dieses Relais natürlich nicht mehr mit dem Rundsteuerempfänger des Energieversogers verbunden sein. Stattdessen wird der Leiter dieses Relais durch ein **zusätzliches Solid-State-Relais** geschaltet. Das Solid-State-Relais wiederum wird mit einem GPIO-Pin des Raspberry Pi verbunden und durch Node-RED gesteuert. Wenn das Solid-State-Relais aus ist, ist auch das EVU-Sperre-Relais der Wärmepumpe aus und die EVU-Sperre ist aktiv.
+
+Die **grundsätzliche Idee dieser Steuerung** besteht darin, die EVU-Sperre immer aktiv zu haben außer in den Stunden, die als kostengünstig klassifiziert wurden. Damit die Wärmepumpe läuft, wenn die EVU-Sperre nicht aktiv ist, müssen die Schaltzeiten in der Wärmepumpensteuerung so angepasst werden, dass sie 24 Stunden täglich einschalten würde.
 
 ### Prognose der Leistung der PV-Anlage
 Zur Prognose der Leistung der PV-Anlage wird der der Dienst [Solcast](https://solcast.com/) verwendet, der diese [kostenlos für Hauseigentümer mit Dachsolaranlagen bereitstellt](https://solcast.com/free-rooftop-solar-forecasting). Dafür muss man sich einen **kostenlosen Account** anlegen, bei dem Angaben zur  Lage, Ausrichtung und Leistung der PV-Anlage gemacht werden müssen. Die für die Anlage vergebende Resource Id sowie der API-Key müssen in der Flow-Configuration angegeben werden.
