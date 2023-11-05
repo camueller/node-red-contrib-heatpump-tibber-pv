@@ -107,7 +107,7 @@ Dieser Flow verwendet einen **Config**-Node zur Konfiguration der folgenden **Pf
 - `powerConsumptionHours`: die maximale Anzahl der Stunden, in denen die Wärmepumpe täglich laufen  soll (z.B. 8)
 - `solcastResourceId`: die von [Solcast](https://solcast.com/) für die Anlage vergebene Resource Id (sieht so aus, wobei die "x" für Ziffern/Buchstaben stehen: xxxx-xxxx-xxxx-xxxx)
 - `solcastApiKey`: der bei [Solcast](https://solcast.com/) generierte API key
-- `tibberAuthorizationToken`: der bei [Tibber Developer](https://developer.tibber.com/settings/access-token generierte Access Token für die Scopes`tibber_graph` und `price`
+- `tibberAuthorizationToken`: der bei [Tibber Developer](https://developer.tibber.com/settings/access-token generierte Access Token für die Scopes`tibber_graph`, `homes` und `price`
 - `feedInTariff`: die Einspeisevergütung inkl. MwSt. in Euro/KWh (z.B. 0.1231)
 
  Zusätzlich können folgende **optionale Parameter** gesetzt werden:
