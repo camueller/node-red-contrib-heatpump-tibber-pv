@@ -54,7 +54,7 @@ Darunter wird der aktuelle **Schaltzustand** angeigt, d.h. wenn das aktuell Zeit
 
 Im Diagramm **PV-Prognose** wird die prognostizierte, stündliche Leistung der PV-Anlage in kW gezeigt. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten oder eine Fehlermeldung, falls die Werte nicht abgerufen werden konnten.
 
-Das Diagramm **Strompreis** zeigt den stündlichen Preis für eine kWh an. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten.
+Das Diagramm **Strompreis** zeigt den stündlichen Preis für eine kWh an. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten oder eine Fehlermeldung, falls die Werte nicht abgerufen werden konnten.
 
 Unter Berücksichtgung 
 - der Leistungsaufnahme der Wärmepumpe
