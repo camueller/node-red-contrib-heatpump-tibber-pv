@@ -1,5 +1,102 @@
 [
     {
+        "id": "53909232bb435dbf",
+        "type": "tab",
+        "label": "heatpump-tibber-pv",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b29b435b87b59072",
+        "type": "http request",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 100,
+        "wires": [
+            [
+                "bdae3ff9e5158a9d"
+            ]
+        ]
+    },
+    {
+        "id": "d9f83b41aefaa974",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "hourly pv forecast",
+        "func": "const datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const tomorrow = datefns.addDays(new Date(), 1);\n    if (datefns.isSameDay(periodStartLocalTime, tomorrow)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 100,
+        "wires": [
+            [
+                "3c1d77dcd06ac48b",
+                "698031ac418ee656",
+                "b84ed09930c19163"
+            ]
+        ]
+    },
+    {
+        "id": "c4d717c702fba9b0",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "hourly energy price",
+        "func": "var datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 420,
+        "wires": [
+            [
+                "c5236fd572f60df7",
+                "698031ac418ee656",
+                "6e5ddfb6848b6013"
+            ]
+        ]
+    },
+    {
+        "id": "7ad82c270b16a402",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "calculate cost",
+        "func": "const hourlyPvForecasts = msg.payload.hourlyPvForecasts;\nconst hourlyEnergyPrices = msg.payload.hourlyEnergyPrices;\n\nconst estimatedPowerConsumptionKw = flow.get('estimatedPowerConsumption');\nconst feedInTariff = flow.get('feedInTariff');\n\nconst hourlyEnergyCosts = {};\nif (hourlyEnergyPrices && hourlyPvForecasts && estimatedPowerConsumptionKw) {\n    Object.keys(hourlyEnergyPrices).forEach(key => {\n        const hourlyEnergyPrice = hourlyEnergyPrices[key];\n        const hourlyPvForecast = hourlyPvForecasts[key] ?? 0;\n        const cost = hourlyEnergyPrice * (estimatedPowerConsumptionKw - hourlyPvForecast)\n            + hourlyPvForecast * feedInTariff;\n        hourlyEnergyCosts[key] = cost;\n    });\n}\n\nvar newMsg = { payload: hourlyEnergyCosts };\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 680,
+        "wires": [
+            [
+                "57d358178e243538",
+                "1f2cc1dddf7b1baf"
+            ]
+        ]
+    },
+    {
         "id": "72f3141fb8bfc57b",
         "type": "config",
         "z": "53909232bb435dbf",
@@ -8,13 +105,13 @@
             {
                 "p": "estimatedPowerConsumption",
                 "pt": "flow",
-                "to": "",
+                "to": "4.4",
                 "tot": "num"
             },
             {
                 "p": "powerConsumptionHours",
                 "pt": "flow",
-                "to": "",
+                "to": "8",
                 "tot": "num"
             },
             {
@@ -38,13 +135,19 @@
             {
                 "p": "mandatoryHours",
                 "pt": "flow",
-                "to": "",
+                "to": "[[1,4],[2,4],[3,4],[4,4],[5,4],[6,7],[0,7]]",
                 "tot": "json"
             },
             {
                 "p": "feedInTariff",
                 "pt": "flow",
-                "to": "",
+                "to": "0.1231",
+                "tot": "num"
+            },
+            {
+                "p": "pvForecastFactor",
+                "pt": "flow",
+                "to": "0.3",
                 "tot": "num"
             }
         ],
@@ -52,5 +155,925 @@
         "x": 110,
         "y": 40,
         "wires": []
+    },
+    {
+        "id": "57d358178e243538",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "choose cost efficient hours",
+        "func": "var datefns = global.get('datefns');\n\nconst powerConsumptionHours = flow.get('powerConsumptionHours');\nconst mandatoryHours = flow.get('mandatoryHours');\n\nfunction rangeContainsValue(value, range) {\n    const boundaries = String(range).split('-');\n    if (boundaries.length == 2) {\n        return Number(boundaries[0]) <= value && value <= Number(boundaries[1]);\n    }\n    return false;\n}\n\nfunction getRangeBoundaries(range) {\n    return String(range).split('-').map(boundary => Number(boundary));\n}\n\nfunction sortMapByKey(input) {\n    return new Map([...input.entries()].sort());\n}\n\nfunction sortMapByValue(input) {\n    return new Map([...input.entries()].sort((a, b) => a[1] - b[1]));\n}\n\n// FIXME über global.flow machen\nfunction buildKey(template, hour) {\n    return template.substring(0, 11) + (Number(hour) < 10 ? `0${hour}` : hour);\n}\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nlet hourlyCostSelected = new Map();\nif (hourKeys.length > 0) {\n    const dow = 2;\n    if (mandatoryHours) {\n        mandatoryHours.forEach(entry => {\n            if (Array.isArray(entry)) {\n                if (entry.length === 3 || entry.length === 4) {\n                    const dayOrRange = entry[0];\n                    const hourRange = entry[1];\n                    const hoursToBeSelected = Number(entry[2]);\n                    const hoursMandatory = entry[3] ? Array(entry[3]) : [];\n                    if (rangeContainsValue(dow, dayOrRange) || dow === dayOrRange) {\n                        const boundaries = getRangeBoundaries(hourRange);\n                        hoursMandatory.forEach(hour => {\n                            const key = buildKey(hourKeys[0], hour)\n                            hourlyCostSelected.set(key, hourlyCost.get(key));\n                        });\n                        const hourRangeWithCost = new Map();\n                        for (let hour = boundaries[0]; hour <= boundaries[1]; hour++) {\n                            const key = buildKey(hourKeys[0], hour)\n                            hourRangeWithCost.set(key, hourlyCost.get(key));\n                        }\n                        const hourRangeWithCostSorted = sortMapByValue(hourRangeWithCost);\n                        Array.from(hourRangeWithCostSorted.keys()).forEach(key => {\n                            if (hourlyCostSelected.size < hoursToBeSelected) {\n                                hourlyCostSelected.set(key, hourRangeWithCostSorted.get(key));\n                            }\n                        });\n                    }\n                } else if (entry.length === 2) {\n                    const dayOrRange = entry[0];\n                    const hour = entry[1];\n                    if (rangeContainsValue(dow, dayOrRange) || dow === dayOrRange) {\n                        const key = buildKey(hourKeys[0], hour);\n                        hourlyCostSelected.set(key, hourlyCost.get(key));\n                    }\n                } else if (entry.length === 1) {\n                    const hour = entry[0];\n                    const key = buildKey(hourKeys[0], hour);\n                    hourlyCostSelected.set(key, hourlyCost.get(key));\n                }\n            } else {\n                const hour = entry;\n                const key = buildKey(hourKeys[0], hour);\n                hourlyCostSelected.set(key, hourlyCost.get(key));\n            }\n            const hourlyCostSorted = sortMapByValue(hourlyCost);\n            Array.from(hourlyCostSorted.keys()).forEach(key => {\n                if (hourlyCostSelected.size < powerConsumptionHours) {\n                    hourlyCostSelected.set(key, hourlyCost.get(key));\n                }\n            });\n            hourlyCostSelected = sortMapByKey(hourlyCostSelected);\n        });\n    }\n}\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 800,
+        "wires": [
+            [
+                "155225f6120582e9",
+                "7b57b21785009960"
+            ]
+        ]
+    },
+    {
+        "id": "c57e2ce21a60b90e",
+        "type": "ui_chart",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "group": "5fe71c3fd07a84a7",
+        "order": 3,
+        "width": "0",
+        "height": "0",
+        "label": "PV-Prognose",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1150,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3c1d77dcd06ac48b",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "generate pv forecast chart",
+        "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).slice(0, 24).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data:[data], labels}]};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 100,
+        "wires": [
+            [
+                "c57e2ce21a60b90e"
+            ]
+        ]
+    },
+    {
+        "id": "c5236fd572f60df7",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "generate hourly energy price chart",
+        "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data: [data], labels }] };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 420,
+        "wires": [
+            [
+                "ca3d916f62f8ea22"
+            ]
+        ]
+    },
+    {
+        "id": "ca3d916f62f8ea22",
+        "type": "ui_chart",
+        "z": "53909232bb435dbf",
+        "name": "Hourly energy price",
+        "group": "5fe71c3fd07a84a7",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "label": "Strompreis",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1170,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cf8da99148e193d4",
+        "type": "ui_chart",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "group": "5fe71c3fd07a84a7",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "label": "Stromkosten",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1170,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1f2cc1dddf7b1baf",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "generate hourly cost chart",
+        "func": "const data = [];\nconst labels = [];\nObject.keys(msg.payload).forEach(key => {\n    data.push(msg.payload[key]);\n    labels.push(Number(key.substring(11)));\n});\nreturn { payload: [{ series: ['X'], data: [data], labels }] };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 680,
+        "wires": [
+            [
+                "cf8da99148e193d4"
+            ]
+        ]
+    },
+    {
+        "id": "155225f6120582e9",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "generate most cost efficient hours chart",
+        "func": "const data = [];\nconst labels = [];\n/*\nObject.keys(msg.payload).forEach(key => {\n    data.push(1);\n    labels.push(Number(key.substring(11)));\n});\n*/\n\nconst selectedHours = [];\n//Object.keys(msg.payload).forEach(key => selectedHours.push(key.toString()));\nmsg.payload.forEach(key => selectedHours.push(Number(key.substring(11))));\n\nfor(let hour=0; hour<24; hour++) {\n    data.push(selectedHours.indexOf(hour) > -1 ? 1 : 0);\n    labels.push(hour);\n}\nreturn { payload: [{ series: ['X'], data: [data], labels }] };\n//return { payload: selectedHours };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 800,
+        "wires": [
+            [
+                "15aabdd2187c0470"
+            ]
+        ]
+    },
+    {
+        "id": "15aabdd2187c0470",
+        "type": "ui_chart",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "group": "5fe71c3fd07a84a7",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "label": "Kostengünstigste Stunden",
+        "chartType": "bar",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": true,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1210,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7b57b21785009960",
+        "type": "change",
+        "z": "53909232bb435dbf",
+        "name": "store cost efficient hours",
+        "rules": [
+            {
+                "t": "set",
+                "p": "costEfficientHours",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 930,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b55dbfacaaa2e6ea",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "generate date from cache",
+        "func": "var datefns = global.get('datefns');\n\nconst now = global.get('toZonedDate')(new Date(msg.payload));\n\nreturn { payload: datefns.format(now, \"dd.MM.yyyy - HH' Uhr'\") };",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 980,
+        "wires": [
+            [
+                "a9257c5fd597c372"
+            ]
+        ]
+    },
+    {
+        "id": "a9257c5fd597c372",
+        "type": "ui_text",
+        "z": "53909232bb435dbf",
+        "group": "5fe71c3fd07a84a7",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Zeitfenster",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 1170,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "d3a56c54933e3010",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "is selected hour?",
+        "func": "var datefns = global.get('datefns');\n\nconst hourlyPvForecasts = flow.get('costEfficientHours');\n\nconst now = global.get('toZonedDate')(new Date(msg.payload));\nconst key = datefns.format(now, \"yyyy-MM-dd'T'HH\");\nconst isSelectedHour = hourlyPvForecasts ? hourlyPvForecasts.indexOf(key) > -1 : false;\n\nreturn { payload: isSelectedHour };\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 1040,
+        "wires": [
+            [
+                "89a6f3b395f8d1a3",
+                "dbf24f3be6ed46a2"
+            ]
+        ]
+    },
+    {
+        "id": "5e8ffbce4a4517f0",
+        "type": "inject",
+        "z": "53909232bb435dbf",
+        "name": "test hour",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "2023-10-28T08:00:00.000Z",
+        "payloadType": "str",
+        "x": 140,
+        "y": 980,
+        "wires": [
+            [
+                "d3a56c54933e3010",
+                "b55dbfacaaa2e6ea"
+            ]
+        ]
+    },
+    {
+        "id": "698031ac418ee656",
+        "type": "join",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1130,
+        "y": 320,
+        "wires": [
+            [
+                "7ad82c270b16a402"
+            ]
+        ]
+    },
+    {
+        "id": "74baf2009a51d306",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "prepare HTP request",
+        "func": "const solcastResourceId = flow.get('solcastResourceId');\nconst solcastApiKey = flow.get('solcastApiKey');\nreturn { url: `https://api.solcast.com.au/rooftop_sites/${solcastResourceId}/forecasts?format=json&api_key=${solcastApiKey}`};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 100,
+        "wires": [
+            [
+                "b29b435b87b59072"
+            ]
+        ]
+    },
+    {
+        "id": "84d4c93abcdeb85e",
+        "type": "http request",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.tibber.com/v1-beta/gql",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Authorization",
+                "keyValue": "",
+                "valueType": "msg",
+                "valueValue": "authorization"
+            },
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": "application/json"
+            }
+        ],
+        "x": 550,
+        "y": 420,
+        "wires": [
+            [
+                "69b5a3c741b62380"
+            ]
+        ]
+    },
+    {
+        "id": "d4af6a26fcce30b5",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "prepare HTP request",
+        "func": "return {\n  authorization: `Bearer ${flow.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {tomorrow {total startsAt}}}}}}\"}'\n};",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 420,
+        "wires": [
+            [
+                "84d4c93abcdeb85e"
+            ]
+        ]
+    },
+    {
+        "id": "89a6f3b395f8d1a3",
+        "type": "rpi-gpio out",
+        "z": "53909232bb435dbf",
+        "name": "Solid State Relay",
+        "pin": "21",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "bcm": true,
+        "x": 1190,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "ce75ec3164ec175e",
+        "type": "inject",
+        "z": "53909232bb435dbf",
+        "name": "on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "jsonata",
+        "x": 130,
+        "y": 1120,
+        "wires": [
+            [
+                "89a6f3b395f8d1a3",
+                "dbf24f3be6ed46a2"
+            ]
+        ]
+    },
+    {
+        "id": "8eeffa25c3a600df",
+        "type": "inject",
+        "z": "53909232bb435dbf",
+        "name": "off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "jsonata",
+        "x": 130,
+        "y": 1180,
+        "wires": [
+            [
+                "89a6f3b395f8d1a3",
+                "dbf24f3be6ed46a2"
+            ]
+        ]
+    },
+    {
+        "id": "7b3ceb9671e7a2f7",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "lib:dateFunctions",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "global.set('toZonedDate', function (date) {\n    const datefnstz = global.get('datefnstz')\n    const timeZone = 'Europe/Berlin'\n    return datefnstz.utcToZonedTime(date, env.get(\"TZ\"));\n});\n\nglobal.set('toDateFromKey', function (dateKey) {\n    return new Date(\n        Number.parseInt(dateKey.substring(0, 4)),\n        Number.parseInt(dateKey.substring(5, 7)) - 1,\n        Number.parseInt(dateKey.substring(8, 10))\n    );\n});\n",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "99bfaf7045376159",
+        "type": "cronplus",
+        "z": "53909232bb435dbf",
+        "name": "check hour",
+        "outputField": "payload",
+        "timeZone": "",
+        "storeName": "",
+        "commandResponseMsgOutput": "output1",
+        "defaultLocation": "",
+        "defaultLocationType": "default",
+        "outputs": 1,
+        "options": [
+            {
+                "name": "schedule",
+                "topic": "topic1",
+                "payloadType": "date",
+                "payload": "",
+                "expressionType": "cron",
+                "expression": "0 0 * * * *",
+                "location": "",
+                "offset": "0",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset"
+            }
+        ],
+        "x": 150,
+        "y": 1040,
+        "wires": [
+            [
+                "b55dbfacaaa2e6ea",
+                "d3a56c54933e3010"
+            ]
+        ]
+    },
+    {
+        "id": "0ee45497984ec87b",
+        "type": "cronplus",
+        "z": "53909232bb435dbf",
+        "name": "trigger tibber api",
+        "outputField": "payload",
+        "timeZone": "",
+        "storeName": "",
+        "commandResponseMsgOutput": "output1",
+        "defaultLocation": "",
+        "defaultLocationType": "default",
+        "outputs": 1,
+        "options": [
+            {
+                "name": "schedule",
+                "topic": "topic1",
+                "payloadType": "date",
+                "payload": "",
+                "expressionType": "cron",
+                "expression": "0 30 23 * * *",
+                "location": "",
+                "offset": "0",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset"
+            }
+        ],
+        "x": 140,
+        "y": 420,
+        "wires": [
+            [
+                "d4af6a26fcce30b5"
+            ]
+        ]
+    },
+    {
+        "id": "66e4020a19205e48",
+        "type": "cronplus",
+        "z": "53909232bb435dbf",
+        "name": "trigger pv forecast",
+        "outputField": "payload",
+        "timeZone": "",
+        "storeName": "",
+        "commandResponseMsgOutput": "output1",
+        "defaultLocation": "",
+        "defaultLocationType": "default",
+        "outputs": 1,
+        "options": [
+            {
+                "name": "schedule",
+                "topic": "topic1",
+                "payloadType": "date",
+                "payload": "",
+                "expressionType": "cron",
+                "expression": "0 30 23 * * *",
+                "location": "",
+                "offset": "0",
+                "solarType": "all",
+                "solarEvents": "sunrise,sunset"
+            }
+        ],
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "74baf2009a51d306"
+            ]
+        ]
+    },
+    {
+        "id": "bdae3ff9e5158a9d",
+        "type": "switch",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "forecasts",
+                "vt": "str"
+            },
+            {
+                "t": "hask",
+                "v": "response_status",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 100,
+        "wires": [
+            [
+                "d9f83b41aefaa974"
+            ],
+            [
+                "5e5f360b13fe2087"
+            ]
+        ]
+    },
+    {
+        "id": "3e88d48aa4f8c88f",
+        "type": "ui_text",
+        "z": "53909232bb435dbf",
+        "group": "5fe71c3fd07a84a7",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "PV forecast status",
+        "label": "Status:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": true,
+        "font": "",
+        "fontSize": "12",
+        "color": "#000000",
+        "x": 1170,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "5e5f360b13fe2087",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "extract error message",
+        "func": "return { payload: msg.payload.response_status.message };",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 240,
+        "wires": [
+            [
+                "3e88d48aa4f8c88f"
+            ]
+        ]
+    },
+    {
+        "id": "b84ed09930c19163",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "extract date",
+        "func": "var datefns = global.get('datefns');\n\nconst date = global.get('toDateFromKey')(Object.keys(msg.payload)[0]);\nconst zoneDate = global.get('toZonedDate')(date);\n\nreturn { payload: `Daten für ${datefns.format(zoneDate, \"dd.MM.yyyy\")}`};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 200,
+        "wires": [
+            [
+                "3e88d48aa4f8c88f"
+            ]
+        ]
+    },
+    {
+        "id": "ccd9d8a62a4caa7a",
+        "type": "ui_text",
+        "z": "53909232bb435dbf",
+        "group": "5fe71c3fd07a84a7",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "name": "Hourly energy price status",
+        "label": "Status:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": true,
+        "font": "",
+        "fontSize": "12",
+        "color": "#000000",
+        "x": 1190,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "6e5ddfb6848b6013",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "extract date",
+        "func": "var datefns = global.get('datefns');\n\nconst date = global.get('toDateFromKey')(Object.keys(msg.payload)[0]);\nconst zoneDate = global.get('toZonedDate')(date);\n\nreturn { payload: `Daten für ${datefns.format(zoneDate, \"dd.MM.yyyy\")}` };",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 520,
+        "wires": [
+            [
+                "ccd9d8a62a4caa7a"
+            ]
+        ]
+    },
+    {
+        "id": "dbf24f3be6ed46a2",
+        "type": "ui_led",
+        "z": "53909232bb435dbf",
+        "order": 2,
+        "group": "5fe71c3fd07a84a7",
+        "width": 0,
+        "height": 0,
+        "label": "Schaltzustand",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 1150,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "69b5a3c741b62380",
+        "type": "switch",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "data",
+                "vt": "str"
+            },
+            {
+                "t": "hask",
+                "v": "errors",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 710,
+        "y": 420,
+        "wires": [
+            [
+                "c4d717c702fba9b0"
+            ],
+            [
+                "1ea5849461455414"
+            ]
+        ]
+    },
+    {
+        "id": "1ea5849461455414",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "extract error message",
+        "func": "return { payload: msg.payload.errors[0].message };",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 560,
+        "wires": [
+            [
+                "ccd9d8a62a4caa7a"
+            ]
+        ]
+    },
+    {
+        "id": "5fe71c3fd07a84a7",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "a4cb99d3ee80a04f",
+        "order": 1,
+        "disp": false,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a4cb99d3ee80a04f",
+        "type": "ui_tab",
+        "name": "Heizung",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
     }
 ]
