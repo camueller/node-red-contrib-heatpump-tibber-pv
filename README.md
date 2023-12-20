@@ -1,6 +1,10 @@
 # Node-RED basierte Steuerung einer Wärmepumpe mit Tibber und PV-Anlage
 ## Ziel
-Steuerung einer Wärmepumpe zur Erzielung geringstmöglicher Stromkosten durch Nutzung des dynamischen Tarifs mit stündlichen Preisen von [Tibber](https://tibber.com/) und einer PV Anlage
+Steuerung einer Wärmepumpe zur Erzielung geringstmöglicher Stromkosten durch Nutzung des dynamischen Tarifs mit stündlichen Preisen von [Tibber](https://tibber.com/) und einer PV Anlage.
+
+Ich habe zu diesem Thema auch ein Video erstellt, welches die Zusammenhänge und die praktische Umsetzung verständlich machen sollte:
+<a href="https://www.youtube.com/watch?v=sGIVslsUMZ4"><img align="left" src="youtube.png"></a>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 ## Voraussetzungen
 Folgende Vorausstzungen müssen vorliegen:
@@ -36,34 +40,13 @@ Die Prognose der PV-Leistung erfolgt mit einer Auflösung von 30 Minuten. Der Fl
 Bei Verwendung eines kostenlosen Accounts ist die Anzahl der Abfragen der PV-Progrnosen beschränkt auf 10 innerhalb von 24 Stunden. Das ist kein Problem im realen Betrieb, aber möglicherweise beim Testen.
 
 ## Flow
-Die oben beschriebene Funktionsweise wird durch [folgenden Flow](flow.json) erreicht: 
-![Flow](flow.png)
-
-Der Flow besteht im wesentlichen aus drei Teilen
-1. Abfrage der PV-Prognose - wird täglich um 23:30 Uhr ausgeführt
-1. Abfrage der Strompreise für den Folgetag - wird täglich um 23:30 Uhr ausgeführt
-1. Prüfung, ob die aktuelle Stunde als kostengünstig klassifiziert ist, und Aktualisierung des Schaltzustandes - wird zu jeder vollen Stunde ausgeführt
+Die oben beschriebene Funktionsweise wurde implementiert durch einen [Flow, der hier dokumentiert ist](flow.md).
 
 ## Dashboard
-Die Visualisierung des Flows über das Dashboard zeigt mehrere Diagramme für den Tag:
-![Dashboard](dashboard.png)
+Um das Verhalten der Steuerung transparent zu machen, beinhaltet der Flow auch die Visualisierung der Daten in einem [Dashboard, das hier dokumentiert ist](dashboard.md).
 
-Ganz oben wird das **Zeitfenster** angezeigt, das für die letzte Prüfung auf die kostengünstigesten Stunden verwendet wurde. Das sollte immer die aktuelle Stunde sein. 
+## Installation
+Die Installation ist [hier dokumentiert](installation.md)
 
-Darunter wird der aktuelle **Schaltzustand** angeigt, d.h. wenn das aktuell Zeitfenster als kostengünstig klassifiziert wurde, sollte ein grünes Licht anzeigen, dass der Schalter eingeschaltet ist bzw. ein rotes Licht, dass der Schalter ausgeschaltet ist.
-
-Im Diagramm **PV-Prognose** wird die prognostizierte, stündliche Leistung der PV-Anlage in kW gezeigt. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten oder eine Fehlermeldung, falls die Werte nicht abgerufen werden konnten.
-
-Das Diagramm **Strompreis** zeigt den stündlichen Preis für eine kWh an. Unterhalb des Diagramms wird angezeigt, für welches Datum die Werte gelten oder eine Fehlermeldung, falls die Werte nicht abgerufen werden konnten.
-
-Unter Berücksichtgung 
-- der Leistungsaufnahme der Wärmepumpe
-- der prognostizierten Leistung der PV-Anlage
-- der stündlichen Strompreise
-- der Einspeisevergütung
-
-zeigt das Diagramm die stündlichen **Stromkosten** entsprechend der konfigurierten *Leistungsaufnahme der Wärmepumpe* an.
-
-Im Diagramm **Kostengünstigste Stunden** werden entsprechend der *maximalen Anzahl von täglichen Betriebsstunden* diejenigen Stunden angezeigt, die als kostengünstig klassifiziert wurden oder Pflichtstunden sind. In diesen Stunden darf die Wärmepumpe einschalten. Im Bild sind zwar die Kosten für die Zeit ab 20 Uhr (83.7 Cent) geringer als um 8 Uhr (89.5 Cent), aber 8 Uhr ist Samstags bei mir als Pflichtstunde konfiguriert.
-
-[Installation und Konfiguration](installation.md)
+## Konfiguration
+Die Konfiguration ist [hier dokumentiert](configuration.md)
