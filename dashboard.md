@@ -19,4 +19,11 @@ Unter Berücksichtgung
 
 zeigt das Diagramm die stündlichen **Stromkosten** entsprechend der konfigurierten *Leistungsaufnahme der Wärmepumpe* an.
 
-Im Diagramm **Kostengünstigste Stunden** werden entsprechend der *maximalen Anzahl von täglichen Betriebsstunden* diejenigen Stunden angezeigt, die als kostengünstig klassifiziert wurden oder Pflichtstunden sind. In diesen Stunden darf die Wärmepumpe einschalten. Im Bild sind zwar die Kosten für die Zeit ab 20 Uhr (83.7 Cent) geringer als um 8 Uhr (89.5 Cent), aber 8 Uhr ist Samstags bei mir als Pflichtstunde konfiguriert.
+Im Diagramm **Kostengünstigste Stunden** werden entsprechend der *maximalen Anzahl von täglichen Betriebsstunden* diejenigen Stunden angezeigt, die 
+- als kostengünstig klassifiziert wurden oder
+- Pflichtstunden sind oder
+- über die Partyzeit-Funktion hinzugefügt wurden
+
+In diesen Stunden darf die Wärmepumpe einschalten. Im Bild sind zwar die Kosten für die Zeit ab 20 Uhr (83.7 Cent) geringer als um 8 Uhr (89.5 Cent), aber 8 Uhr ist Samstags bei mir als Pflichtstunde konfiguriert.
+
+Im Bereich **Partyzeit** kann eines Stundenbereich zu den bereits als kostengünstig klassifizierten Stunden des aktuellen Tages hinzugefügt werden. Das entspricht der Partyzeit-Funktion bei vielen Heizungssteuerungen.

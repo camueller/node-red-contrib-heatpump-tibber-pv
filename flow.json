@@ -135,7 +135,7 @@
             {
                 "p": "mandatoryHours",
                 "pt": "flow",
-                "to": "[[\"1-5\",4],[6,7],[0,7]]",
+                "to": "[[\"1-5\",4],[6,\"0-8\",4,[8]],[0,\"0-8\",4,[8]]]",
                 "tot": "json"
             },
             {
@@ -473,7 +473,7 @@
         "finalize": "",
         "libs": [],
         "x": 930,
-        "y": 980,
+        "y": 1040,
         "wires": [
             [
                 "a9257c5fd597c372"
@@ -498,7 +498,7 @@
         "fontSize": "",
         "color": "#000000",
         "x": 1170,
-        "y": 980,
+        "y": 1040,
         "wires": []
     },
     {
@@ -514,7 +514,7 @@
         "finalize": "",
         "libs": [],
         "x": 910,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "dbf24f3be6ed46a2",
@@ -638,7 +638,7 @@
         "out": "out",
         "bcm": true,
         "x": 1190,
-        "y": 1120,
+        "y": 1180,
         "wires": []
     },
     {
@@ -658,8 +658,8 @@
         "topic": "",
         "payload": "true",
         "payloadType": "jsonata",
-        "x": 130,
-        "y": 1120,
+        "x": 110,
+        "y": 1180,
         "wires": [
             [
                 "89a6f3b395f8d1a3",
@@ -684,8 +684,8 @@
         "topic": "",
         "payload": "false",
         "payloadType": "jsonata",
-        "x": 130,
-        "y": 1180,
+        "x": 110,
+        "y": 1240,
         "wires": [
             [
                 "89a6f3b395f8d1a3",
@@ -737,8 +737,8 @@
                 "solarEvents": "sunrise,sunset"
             }
         ],
-        "x": 150,
-        "y": 980,
+        "x": 130,
+        "y": 1040,
         "wires": [
             [
                 "b55dbfacaaa2e6ea",
@@ -945,7 +945,7 @@
         "showGlow": true,
         "name": "",
         "x": 1150,
-        "y": 1180,
+        "y": 1240,
         "wires": []
     },
     {
@@ -1037,6 +1037,73 @@
         "y": 40,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "f1a31f45d5ad032a",
+        "type": "ui_form",
+        "z": "53909232bb435dbf",
+        "name": "",
+        "label": "Partyzeit",
+        "group": "5fe71c3fd07a84a7",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "von",
+                "value": "partyHourStart",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "bis",
+                "value": "partyHourEnd",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "partyHourStart": "",
+            "partyHourEnd": ""
+        },
+        "payload": "",
+        "submit": "Zeit hinzufügen",
+        "cancel": "Abbrechen",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 1160,
+        "y": 920,
+        "wires": [
+            [
+                "01fca9e18423908c"
+            ]
+        ]
+    },
+    {
+        "id": "01fca9e18423908c",
+        "type": "function",
+        "z": "53909232bb435dbf",
+        "name": "add party time",
+        "func": "var datefns = global.get('datefns');\n\nconst costEfficientHours = flow.get('costEfficientHours'); \nconst today = global.get('toZonedDate')(new Date());\nconst template = datefns.format(today, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\ncostEfficientHours.forEach( hour => hourlyCostSelected.set(hour, 0));\n\nconst partyHourStart = msg.payload.partyHourStart;\nconst partyHourEnd = msg.payload.partyHourEnd;\nif (partyHourStart && partyHourEnd) {\n    global.get('addSelectedHours')(template, `${partyHourStart}-${partyHourEnd}`, hourlyCostSelected, hourlyCost);\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 920,
+        "wires": [
+            [
+                "7b57b21785009960",
+                "155225f6120582e9",
+                "d3a56c54933e3010"
+            ]
         ]
     },
     {
