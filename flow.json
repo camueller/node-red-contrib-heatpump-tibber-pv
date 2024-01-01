@@ -27,7 +27,8 @@
         "y": 100,
         "wires": [
             [
-                "bdae3ff9e5158a9d"
+                "bdae3ff9e5158a9d",
+                "999f227fd9aeebc7"
             ]
         ]
     },
@@ -36,7 +37,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "hourly pv forecast",
-        "func": "const datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const tomorrow = datefns.addDays(new Date(), 1);\n    if (datefns.isSameDay(periodStartLocalTime, tomorrow)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
+        "func": "const datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const today = new Date();\n    if (datefns.isSameDay(periodStartLocalTime, today)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -58,7 +59,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "hourly energy price",
-        "func": "var datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
+        "func": "var datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.today.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -153,7 +154,7 @@
             {
                 "p": "fallbackHours",
                 "pt": "flow",
-                "to": "[\"0-5\"]",
+                "to": "[[\"0-5\"],[6,8],[0,8]]",
                 "tot": "json"
             }
         ],
@@ -174,8 +175,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 940,
-        "y": 800,
+        "x": 700,
+        "y": 740,
         "wires": [
             [
                 "155225f6120582e9",
@@ -454,10 +455,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 930,
-        "y": 860,
+        "x": 690,
+        "y": 800,
         "wires": [
-            []
+            [
+                "6c10c1f5d026d1c2"
+            ]
         ]
     },
     {
@@ -602,7 +605,8 @@
         "y": 420,
         "wires": [
             [
-                "69b5a3c741b62380"
+                "69b5a3c741b62380",
+                "999f227fd9aeebc7"
             ]
         ]
     },
@@ -611,7 +615,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "prepare HTP request",
-        "func": "return {\n  authorization: `Bearer ${flow.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {tomorrow {total startsAt}}}}}}\"}'\n};",
+        "func": "return {\n  authorization: `Bearer ${flow.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {today {total startsAt}}}}}}\"}'\n};",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -765,7 +769,7 @@
                 "payloadType": "date",
                 "payload": "",
                 "expressionType": "cron",
-                "expression": "0 30 23 * * *",
+                "expression": "31 0 0 * * *",
                 "location": "",
                 "offset": "0",
                 "solarType": "all",
@@ -776,8 +780,8 @@
         "y": 420,
         "wires": [
             [
-                "d4af6a26fcce30b5",
                 "ba0d2d2bbfe3ea42",
+                "d4af6a26fcce30b5",
                 "74baf2009a51d306"
             ]
         ]
@@ -902,7 +906,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "extract date",
-        "func": "var datefns = global.get('datefns');\n\nconst date = global.get('toDateFromKey')(Object.keys(msg.payload)[0]);\nconst zoneDate = global.get('toZonedDate')(date);\n\nreturn { payload: `Daten für ${datefns.format(zoneDate, \"dd.MM.yyyy\")}` };",
+        "func": "var datefns = global.get('datefns');\nconst keys = Object.keys(msg.payload);\nif(!keys.length) {\n    return {payload: 'Datum nicht gefunden in Daten.'}\n}\nconst date = global.get('toDateFromKey')(Object.keys(msg.payload)[0]);\nconst zoneDate = global.get('toZonedDate')(date);\n\nreturn { payload: `Daten für ${datefns.format(zoneDate, \"dd.MM.yyyy\")}` };",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -970,7 +974,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 710,
+        "x": 730,
         "y": 420,
         "wires": [
             [
@@ -1006,7 +1010,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "fallback cost efficient hours",
-        "func": "var datefns = global.get('datefns');\n\nconst fallbackHours = flow.get('fallbackHours');\nconst zoneDate = global.get('toZonedDate')(new Date());\nconst tomorrow = datefns.addDays(zoneDate, 1);\nconst dow = datefns.getDay(tomorrow);\nconst template = datefns.format(tomorrow, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\n\nif (fallbackHours) {\n    fallbackHours.forEach(entry => {\n        if (Array.isArray(entry)) {\n            if (entry.length === 2) {\n                const dayOrRange = entry[0];\n                const hourOrRange = entry[1];\n                if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                    global.get('addSelectedHours')(hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else if (entry.length === 1) {\n                const hourOrRange = entry[0];\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        } else {\n            const hourOrRange = entry;\n            global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n        }\n    });\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "func": "var datefns = global.get('datefns');\n\nconst fallbackHours = flow.get('fallbackHours');\nconst date = global.get('toZonedDate')(new Date());\nconst dow = datefns.getDay(date);\nconst template = datefns.format(date, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\n\nif (fallbackHours) {\n    fallbackHours.forEach(entry => {\n        if (Array.isArray(entry)) {\n            if (entry.length === 2) {\n                const dayOrRange = entry[0];\n                const hourOrRange = entry[1];\n                if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                    global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else if (entry.length === 1) {\n                const hourOrRange = entry[0];\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        } else {\n            const hourOrRange = entry;\n            global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n        }\n    });\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1017,7 +1021,8 @@
         "y": 860,
         "wires": [
             [
-                "7b57b21785009960"
+                "7b57b21785009960",
+                "155225f6120582e9"
             ]
         ]
     },
@@ -1051,14 +1056,14 @@
         "height": 0,
         "options": [
             {
-                "label": "von",
+                "label": "von Stunde",
                 "value": "partyHourStart",
                 "type": "number",
                 "required": true,
                 "rows": null
             },
             {
-                "label": "bis",
+                "label": "bis Stunde",
                 "value": "partyHourEnd",
                 "type": "number",
                 "required": true,
@@ -1089,7 +1094,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "add party time",
-        "func": "var datefns = global.get('datefns');\n\nconst costEfficientHours = flow.get('costEfficientHours'); \nconst today = global.get('toZonedDate')(new Date());\nconst template = datefns.format(today, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\ncostEfficientHours.forEach( hour => hourlyCostSelected.set(hour, 0));\n\nconst partyHourStart = msg.payload.partyHourStart;\nconst partyHourEnd = msg.payload.partyHourEnd;\nif (partyHourStart && partyHourEnd) {\n    global.get('addSelectedHours')(template, `${partyHourStart}-${partyHourEnd}`, hourlyCostSelected, hourlyCost);\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "func": "var datefns = global.get('datefns');\n\nconst costEfficientHours = flow.get('costEfficientHours'); \nconst today = global.get('toZonedDate')(new Date());\nconst template = datefns.format(today, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\nif(costEfficientHours) {\n    costEfficientHours.forEach( hour => hourlyCostSelected.set(hour, 0));\n}\n\nconst partyHourStart = msg.payload.partyHourStart;\nconst partyHourEnd = msg.payload.partyHourEnd;\nif (partyHourStart && partyHourEnd) {\n    global.get('addSelectedHours')(template, `${partyHourStart}-${partyHourEnd}`, hourlyCostSelected, hourlyCost);\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1101,10 +1106,54 @@
         "wires": [
             [
                 "7b57b21785009960",
-                "155225f6120582e9",
-                "d3a56c54933e3010"
+                "155225f6120582e9"
             ]
         ]
+    },
+    {
+        "id": "6c10c1f5d026d1c2",
+        "type": "change",
+        "z": "53909232bb435dbf",
+        "name": "send timestamp",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 1000,
+        "wires": [
+            [
+                "d3a56c54933e3010",
+                "b55dbfacaaa2e6ea"
+            ]
+        ]
+    },
+    {
+        "id": "999f227fd9aeebc7",
+        "type": "debug",
+        "z": "53909232bb435dbf",
+        "name": "log response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 750,
+        "y": 320,
+        "wires": []
     },
     {
         "id": "5fe71c3fd07a84a7",
