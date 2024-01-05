@@ -4,7 +4,7 @@ Steuerung einer Wärmepumpe zur Erzielung geringstmöglicher Stromkosten durch N
 
 Ich habe zu diesem Thema auch ein Video erstellt, welches die Zusammenhänge und die praktische Umsetzung verständlich machen sollte:
 <a href="https://www.youtube.com/watch?v=sGIVslsUMZ4"><img align="left" src="youtube.png"></a>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 ## Voraussetzungen
 Folgende Vorausstzungen müssen vorliegen:
@@ -39,14 +39,21 @@ Die Prognose der PV-Leistung erfolgt mit einer Auflösung von 30 Minuten. Der Fl
 
 Bei Verwendung eines kostenlosen Accounts ist die Anzahl der Abfragen der PV-Progrnosen beschränkt auf 10 innerhalb von 24 Stunden. Das ist kein Problem im realen Betrieb, aber möglicherweise beim Testen.
 
-## Flow
-Die oben beschriebene Funktionsweise wurde implementiert durch einen [Flow, der hier dokumentiert ist](flow.md).
+## Flow und Dashboard 
+<a><img align="left" src="flow_thumbnail.png"></a>
+Die oben beschriebene Funktionsweise wurde implementiert durch [diesen Flow](flow.md).
 
-## Dashboard
-Um das Verhalten der Steuerung transparent zu machen, beinhaltet der Flow auch die Visualisierung der Daten in einem [Dashboard, das hier dokumentiert ist](dashboard.md).
+Um das Verhalten der Steuerung transparent zu machen, beinhaltet der Flow auch die [Visualisierung der Daten in einem Dashboard](dashboard.md).
 
-## Installation
-Die Installation ist [hier dokumentiert](installation.md)
+## Installation und Konfiguration
+<a><img align="left" src="install.png"></a>
+Zur Nutzung des Flows inst die [Installation von Node-RED und einigen Bibliotheken erforderlich](installation.md).
 
-## Konfiguration
-Die Konfiguration ist [hier dokumentiert](configuration.md)
+Damit der Flow tatsächlich funktioniert ist die [Konfiguration einiger Werte](configuration.md) erforderlich.
+
+## Unterstützung
+<a href="doc/Support_DE.md"><img align="left" src="support.jpeg"></a>
+Diskussionen und Fragen rund um den *Smart Appliance Enabler* sind in [Github Diskussion](https://github.com/camueller/node-red-contrib-heatpump-tibber-pv/discussions) richtig platziert.
+
+Darüber hinaus biete ich einen [persönlichen, individuellen, kostenpflichtigen Support mit Beratung](Support.md) an - quasi das "Rundum-sorglos Paket".
+<br><br><br>
