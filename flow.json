@@ -27,8 +27,7 @@
         "y": 100,
         "wires": [
             [
-                "bdae3ff9e5158a9d",
-                "999f227fd9aeebc7"
+                "bdae3ff9e5158a9d"
             ]
         ]
     },
@@ -37,14 +36,14 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "hourly pv forecast",
-        "func": "const datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const today = new Date();\n    if (datefns.isSameDay(periodStartLocalTime, today)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
+        "func": "node.debug(JSON.stringify(msg.payload));\n\nconst datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const today = new Date();\n    if (datefns.isSameDay(periodStartLocalTime, today)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 930,
         "y": 100,
         "wires": [
             [
@@ -59,14 +58,14 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "hourly energy price",
-        "func": "var datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.today.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
+        "func": "node.debug(JSON.stringify(msg.payload));\n\nvar datefns = global.get('datefns');\n\nconst hourlyEnergyPrices = {};\nconst result = msg.payload.data.viewer.homes[0].currentSubscription.priceInfo.today.forEach(item => {\n    const key = item.startsAt.substring(0, 13);\n    hourlyEnergyPrices[key] = item.total;\n});\n\nvar newMsg = { topic: 'hourlyEnergyPrices', payload: hourlyEnergyPrices };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 930,
         "y": 420,
         "wires": [
             [
@@ -88,8 +87,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 900,
-        "y": 680,
+        "x": 580,
+        "y": 660,
         "wires": [
             [
                 "57d358178e243538",
@@ -148,7 +147,7 @@
             {
                 "p": "pvForecastFactor",
                 "pt": "flow",
-                "to": "0.3",
+                "to": "0.33",
                 "tot": "num"
             },
             {
@@ -175,8 +174,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 740,
+        "x": 840,
+        "y": 720,
         "wires": [
             [
                 "155225f6120582e9",
@@ -222,7 +221,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1150,
+        "x": 1170,
         "y": 160,
         "wires": [
             []
@@ -239,7 +238,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1190,
+        "x": 1210,
         "y": 100,
         "wires": [
             [
@@ -258,7 +257,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1220,
+        "x": 1240,
         "y": 420,
         "wires": [
             [
@@ -304,7 +303,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1170,
+        "x": 1190,
         "y": 480,
         "wires": [
             []
@@ -348,8 +347,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1170,
-        "y": 740,
+        "x": 1190,
+        "y": 600,
         "wires": [
             []
         ]
@@ -365,8 +364,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1210,
-        "y": 680,
+        "x": 1230,
+        "y": 660,
         "wires": [
             [
                 "cf8da99148e193d4"
@@ -384,8 +383,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1260,
-        "y": 800,
+        "x": 1280,
+        "y": 720,
         "wires": [
             [
                 "15aabdd2187c0470"
@@ -430,8 +429,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1210,
-        "y": 860,
+        "x": 1230,
+        "y": 780,
         "wires": [
             []
         ]
@@ -455,8 +454,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 690,
-        "y": 800,
+        "x": 970,
+        "y": 860,
         "wires": [
             [
                 "6c10c1f5d026d1c2"
@@ -475,7 +474,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 930,
+        "x": 950,
         "y": 1040,
         "wires": [
             [
@@ -500,7 +499,7 @@
         "font": "",
         "fontSize": "",
         "color": "#000000",
-        "x": 1170,
+        "x": 1190,
         "y": 1040,
         "wires": []
     },
@@ -516,7 +515,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
+        "x": 930,
         "y": 1100,
         "wires": [
             [
@@ -545,7 +544,7 @@
         "reduceInit": "",
         "reduceInitType": "",
         "reduceFixup": "",
-        "x": 1130,
+        "x": 1150,
         "y": 320,
         "wires": [
             [
@@ -605,8 +604,7 @@
         "y": 420,
         "wires": [
             [
-                "69b5a3c741b62380",
-                "999f227fd9aeebc7"
+                "69b5a3c741b62380"
             ]
         ]
     },
@@ -641,7 +639,7 @@
         "freq": "",
         "out": "out",
         "bcm": true,
-        "x": 1190,
+        "x": 1210,
         "y": 1180,
         "wires": []
     },
@@ -815,7 +813,8 @@
                 "d9f83b41aefaa974"
             ],
             [
-                "5e5f360b13fe2087"
+                "5e5f360b13fe2087",
+                "c06b83343f2137ce"
             ]
         ]
     },
@@ -836,7 +835,7 @@
         "font": "",
         "fontSize": "12",
         "color": "#000000",
-        "x": 1170,
+        "x": 1190,
         "y": 200,
         "wires": []
     },
@@ -852,7 +851,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 940,
         "y": 240,
         "wires": [
             [
@@ -872,7 +871,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
+        "x": 910,
         "y": 200,
         "wires": [
             [
@@ -897,7 +896,7 @@
         "font": "",
         "fontSize": "12",
         "color": "#000000",
-        "x": 1190,
+        "x": 1210,
         "y": 520,
         "wires": []
     },
@@ -913,7 +912,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 890,
+        "x": 910,
         "y": 520,
         "wires": [
             [
@@ -948,7 +947,7 @@
         "shape": "circle",
         "showGlow": true,
         "name": "",
-        "x": 1150,
+        "x": 1170,
         "y": 1240,
         "wires": []
     },
@@ -981,7 +980,8 @@
                 "c4d717c702fba9b0"
             ],
             [
-                "1ea5849461455414"
+                "1ea5849461455414",
+                "dd6c5397e5bf24d5"
             ]
         ]
     },
@@ -997,7 +997,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 920,
+        "x": 940,
         "y": 560,
         "wires": [
             [
@@ -1081,7 +1081,7 @@
         "topicType": "msg",
         "splitLayout": "",
         "className": "",
-        "x": 1160,
+        "x": 1180,
         "y": 920,
         "wires": [
             [
@@ -1101,7 +1101,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 940,
+        "x": 420,
         "y": 920,
         "wires": [
             [
@@ -1139,21 +1139,108 @@
         ]
     },
     {
-        "id": "999f227fd9aeebc7",
-        "type": "debug",
+        "id": "e18b2c32b3195faf",
+        "type": "change",
         "z": "53909232bb435dbf",
-        "name": "log response",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 750,
-        "y": 320,
-        "wires": []
+        "name": "retry api call",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "74baf2009a51d306"
+            ]
+        ]
+    },
+    {
+        "id": "c06b83343f2137ce",
+        "type": "delay",
+        "z": "53909232bb435dbf",
+        "name": "delay retry",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "hours",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "e18b2c32b3195faf"
+            ]
+        ]
+    },
+    {
+        "id": "dd6c5397e5bf24d5",
+        "type": "delay",
+        "z": "53909232bb435dbf",
+        "name": "delay retry",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "hours",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 510,
+        "y": 360,
+        "wires": [
+            [
+                "32dfc3cbe3a8e48b"
+            ]
+        ]
+    },
+    {
+        "id": "32dfc3cbe3a8e48b",
+        "type": "change",
+        "z": "53909232bb435dbf",
+        "name": "retry api call",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "d4af6a26fcce30b5"
+            ]
+        ]
     },
     {
         "id": "5fe71c3fd07a84a7",
