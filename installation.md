@@ -62,6 +62,27 @@ Damit Node-RED beim Systemstart ebenfalls gestartet wird (via Systemd), muss fol
 $ sudo systemctl enable nodered
 Created symlink /etc/systemd/system/multi-user.target.wants/nodered.service → /lib/systemd/system/nodered.service.
 ```
+# Node-RED Service-Log in Datei schreiben (optional)
+Das Service-Log von Node-RED kann mit dem Befehl `node-red-log` angezeigt werden. Standardmäßig wird es nicht in eine Datei geschrieben.
+
+Zur besseren Nachvollziehbarkeit erzeugt der Flow einige Einträge im Service-Log. Wenn diese in eine Datei geschrieben werden sollen, muss nachfolgende Befehle zur Installation der notwendigen Konfigurationsdateien ausgeführt werden:
+
+```bash
+sudo wget https://github.com/camueller/node-red-contrib-heatpump-tibber-pv/raw/master/nodered-logging.service -P /etc/systemd/system
+sudo wget https://github.com/camueller/node-red-contrib-heatpump-tibber-pv/raw/master//nodered-logging.conf -P /etc/rsyslog.d
+```
+
+Ausserdem muss in der Datei `/etc/systemd/journald.conf` folgende Zeile hinzugefügt werden, damit die Einträge nicht doppelt in der Log-Datei erscheinen:
+```
+ForwardToSyslog=no
+```
+Abschliesssend müssen einige Dienste neu gestartet werden:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable nodered-logging
+sudo systemctl start nodered-logging
+sudo systemctl restart rsyslog
+```
 
 # Installation benötigter Bibliotheken
 Folgende Module müssen über `Manage Palette -> Install` installiert werden:
