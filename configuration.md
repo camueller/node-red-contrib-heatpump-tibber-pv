@@ -1,6 +1,8 @@
 # Konfiguration
 ## Config
-Dieser Flow verwendet einen **Config**-Node zur Konfiguration der folgenden **Pflicht-Parameter**:
+Dieser Flow verwendet Umgebungsvariablen zur Konfiguration. 
+
+Folgende **Pflicht-Parameter** müssen gesetzt werden:
 
 - `estimatedPowerConsumption`: die geschätzte Leistungsaufnahme der Wärmepumpe in kW (z.B. 4.4)
 - `powerConsumptionHours`: die maximale Anzahl der Stunden, in denen die Wärmepumpe täglich laufen  soll (z.B. 8)

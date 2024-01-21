@@ -87,7 +87,6 @@ sudo systemctl restart rsyslog
 # Installation benötigter Bibliotheken
 Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 - `node-red-contrib-cron-plus`
-- `node-red-contrib-config`
 - `node-red-dashboard`
 - `node-red-contrib-ui-led`
 

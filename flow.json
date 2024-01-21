@@ -5,7 +5,53 @@
         "label": "heatpump-tibber-pv",
         "disabled": false,
         "info": "",
-        "env": []
+        "env": [
+            {
+                "name": "estimatedPowerConsumption",
+                "value": "4.4",
+                "type": "num"
+            },
+            {
+                "name": "powerConsumptionHours",
+                "value": "8",
+                "type": "num"
+            },
+            {
+                "name": "solcastResourceId",
+                "value": "",
+                "type": "str"
+            },
+            {
+                "name": "solcastApiKey",
+                "value": "",
+                "type": "str"
+            },
+            {
+                "name": "tibberAuthorizationToken",
+                "value": "",
+                "type": "str"
+            },
+            {
+                "name": "mandatoryHours",
+                "value": "[[\"1-5\",4],[6,\"0-8\",4,[8]],[0,\"0-8\",4,[8]]]",
+                "type": "json"
+            },
+            {
+                "name": "fallbackHours",
+                "value": "[[\"0-5\"],[6,8],[0,8]]",
+                "type": "json"
+            },
+            {
+                "name": "feedInTariff",
+                "value": "0.1231",
+                "type": "num"
+            },
+            {
+                "name": "pvForecastFactor",
+                "value": "0.33",
+                "type": "num"
+            }
+        ]
     },
     {
         "id": "b29b435b87b59072",
@@ -36,7 +82,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "hourly pv forecast",
-        "func": "node.debug(JSON.stringify(msg.payload));\n\nconst datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = flow.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const today = new Date();\n    if (datefns.isSameDay(periodStartLocalTime, today)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
+        "func": "node.debug(JSON.stringify(msg.payload));\n\nconst datefns = global.get('datefns');\nconst datefnstz = global.get('datefnstz')\nconst timeZone = env.get(\"TZ\");\nconst pvForecastFactor = env.get('pvForecastFactor');\n\nconst hourlyPvForecasts = {};\nconst result = (msg.payload.forecasts ?? []).forEach(item => {\n    const periodStartLocalTime = global.get('toZonedDate')(new Date(item.period_end));\n    const today = new Date();\n    if (datefns.isSameDay(periodStartLocalTime, today)) {\n        const key = datefnstz.format(periodStartLocalTime, 'yyyy-MM-dd\\'T\\'HH', { timeZone });\n        if (hourlyPvForecasts[key]) {\n            hourlyPvForecasts[key] = ((hourlyPvForecasts[key] + item.pv_estimate) / 2) * (pvForecastFactor ?? 1.0);\n        } else {\n            hourlyPvForecasts[key] = item.pv_estimate;\n        }\n    }\n});\n\nvar newMsg = { topic: 'hourlyPvForecasts', payload: hourlyPvForecasts };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -80,7 +126,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "calculate cost",
-        "func": "const hourlyPvForecasts = msg.payload.hourlyPvForecasts;\nconst hourlyEnergyPrices = msg.payload.hourlyEnergyPrices;\n\nconst estimatedPowerConsumptionKw = flow.get('estimatedPowerConsumption');\nconst feedInTariff = flow.get('feedInTariff');\n\nconst hourlyEnergyCosts = {};\nif (hourlyEnergyPrices && hourlyPvForecasts && estimatedPowerConsumptionKw) {\n    Object.keys(hourlyEnergyPrices).forEach(key => {\n        const hourlyEnergyPrice = hourlyEnergyPrices[key];\n        const hourlyPvForecast = hourlyPvForecasts[key] ?? 0;\n        const cost = hourlyEnergyPrice * (estimatedPowerConsumptionKw - hourlyPvForecast)\n            + hourlyPvForecast * feedInTariff;\n        hourlyEnergyCosts[key] = cost;\n    });\n}\n\nvar newMsg = { payload: hourlyEnergyCosts };\nreturn newMsg;",
+        "func": "const hourlyPvForecasts = msg.payload.hourlyPvForecasts;\nconst hourlyEnergyPrices = msg.payload.hourlyEnergyPrices;\n\nconst estimatedPowerConsumptionKw = env.get('estimatedPowerConsumption');\nconst feedInTariff = env.get('feedInTariff');\n\nconst hourlyEnergyCosts = {};\nif (hourlyEnergyPrices && hourlyPvForecasts && estimatedPowerConsumptionKw) {\n    Object.keys(hourlyEnergyPrices).forEach(key => {\n        const hourlyEnergyPrice = hourlyEnergyPrices[key];\n        const hourlyPvForecast = hourlyPvForecasts[key] ?? 0;\n        const cost = hourlyEnergyPrice * (estimatedPowerConsumptionKw - hourlyPvForecast)\n            + hourlyPvForecast * feedInTariff;\n        hourlyEnergyCosts[key] = cost;\n    });\n}\n\nvar newMsg = { payload: hourlyEnergyCosts };\nreturn newMsg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -97,77 +143,11 @@
         ]
     },
     {
-        "id": "72f3141fb8bfc57b",
-        "type": "config",
-        "z": "53909232bb435dbf",
-        "name": "",
-        "properties": [
-            {
-                "p": "estimatedPowerConsumption",
-                "pt": "flow",
-                "to": "4.4",
-                "tot": "num"
-            },
-            {
-                "p": "powerConsumptionHours",
-                "pt": "flow",
-                "to": "8",
-                "tot": "num"
-            },
-            {
-                "p": "solcastResourceId",
-                "pt": "flow",
-                "to": "",
-                "tot": "str"
-            },
-            {
-                "p": "solcastApiKey",
-                "pt": "flow",
-                "to": "",
-                "tot": "str"
-            },
-            {
-                "p": "tibberAuthorizationToken",
-                "pt": "flow",
-                "to": "",
-                "tot": "str"
-            },
-            {
-                "p": "mandatoryHours",
-                "pt": "flow",
-                "to": "[[\"1-5\",4],[6,\"0-8\",4,[8]],[0,\"0-8\",4,[8]]]",
-                "tot": "json"
-            },
-            {
-                "p": "feedInTariff",
-                "pt": "flow",
-                "to": "0.1231",
-                "tot": "num"
-            },
-            {
-                "p": "pvForecastFactor",
-                "pt": "flow",
-                "to": "0.33",
-                "tot": "num"
-            },
-            {
-                "p": "fallbackHours",
-                "pt": "flow",
-                "to": "[[\"0-5\"],[6,8],[0,8]]",
-                "tot": "json"
-            }
-        ],
-        "active": true,
-        "x": 110,
-        "y": 40,
-        "wires": []
-    },
-    {
         "id": "57d358178e243538",
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "choose cost efficient hours",
-        "func": "var datefns = global.get('datefns');\n\nconst powerConsumptionHours = flow.get('powerConsumptionHours');\nconst mandatoryHours = flow.get('mandatoryHours');\n\nfunction sortMapByKey(input) {\n    return new Map([...input.entries()].sort());\n}\n\nfunction sortMapByValue(input) {\n    return new Map([...input.entries()].sort((a, b) => a[1] - b[1]));\n}\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nlet hourlyCostSelected = new Map();\nif (hourKeys.length > 0) {\n    const template = hourKeys[0];\n    const dow = datefns.getDay(global.get('toDateFromKey')(template));\n    if (mandatoryHours) {\n        mandatoryHours.forEach(entry => {\n            if (Array.isArray(entry)) {\n                if (entry.length === 3 || entry.length === 4) {\n                    const dayOrRange = entry[0];\n                    const hourRange = entry[1];\n                    const hoursToBeSelected = Number(entry[2]);\n                    const hoursMandatory = entry[3] ? Array(entry[3]) : [];\n                    if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                        hoursMandatory.forEach(hour => {\n                            const key = global.get('buildKey')(template, hour)\n                            hourlyCostSelected.set(key, hourlyCost.get(key));\n                        });\n                        const hourRangeWithCost = new Map();\n                        global.get('addSelectedHours')(template, hourRange, hourRangeWithCost, hourlyCost);\n                        const hourRangeWithCostSorted = sortMapByValue(hourRangeWithCost);\n                        Array.from(hourRangeWithCostSorted.keys()).forEach(key => {\n                            if (hourlyCostSelected.size < hoursToBeSelected) {\n                                hourlyCostSelected.set(key, hourRangeWithCostSorted.get(key));\n                            }\n                        });\n                    }\n                } else if (entry.length === 2) {\n                    const dayOrRange = entry[0];\n                    const hourOrRange = entry[1];\n                    if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                        global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                    }\n                } else if (entry.length === 1) {\n                    const hourOrRange = entry[0];\n                    global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else {\n                const hourOrRange = entry;\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        });\n    }\n    const hourlyCostSorted = sortMapByValue(hourlyCost);\n    Array.from(hourlyCostSorted.keys()).forEach(key => {\n        if (hourlyCostSelected.size < powerConsumptionHours) {\n            hourlyCostSelected.set(key, hourlyCost.get(key));\n        }\n    });\n    hourlyCostSelected = sortMapByKey(hourlyCostSelected);\n}\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "func": "var datefns = global.get('datefns');\n\nconst powerConsumptionHours = env.get('powerConsumptionHours');\nconst mandatoryHours = env.get('mandatoryHours');\n\nfunction sortMapByKey(input) {\n    return new Map([...input.entries()].sort());\n}\n\nfunction sortMapByValue(input) {\n    return new Map([...input.entries()].sort((a, b) => a[1] - b[1]));\n}\n\nconst hourKeys = Object.keys(msg.payload);\n\nconst hourlyCost = new Map();\nhourKeys.forEach(key => hourlyCost.set(key, msg.payload[key]));\n\nlet hourlyCostSelected = new Map();\nif (hourKeys.length > 0) {\n    const template = hourKeys[0];\n    const dow = datefns.getDay(global.get('toDateFromKey')(template));\n    if (mandatoryHours) {\n        mandatoryHours.forEach(entry => {\n            if (Array.isArray(entry)) {\n                if (entry.length === 3 || entry.length === 4) {\n                    const dayOrRange = entry[0];\n                    const hourRange = entry[1];\n                    const hoursToBeSelected = Number(entry[2]);\n                    const hoursMandatory = entry[3] ? Array(entry[3]) : [];\n                    if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                        hoursMandatory.forEach(hour => {\n                            const key = global.get('buildKey')(template, hour)\n                            hourlyCostSelected.set(key, hourlyCost.get(key));\n                        });\n                        const hourRangeWithCost = new Map();\n                        global.get('addSelectedHours')(template, hourRange, hourRangeWithCost, hourlyCost);\n                        const hourRangeWithCostSorted = sortMapByValue(hourRangeWithCost);\n                        Array.from(hourRangeWithCostSorted.keys()).forEach(key => {\n                            if (hourlyCostSelected.size < hoursToBeSelected) {\n                                hourlyCostSelected.set(key, hourRangeWithCostSorted.get(key));\n                            }\n                        });\n                    }\n                } else if (entry.length === 2) {\n                    const dayOrRange = entry[0];\n                    const hourOrRange = entry[1];\n                    if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                        global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                    }\n                } else if (entry.length === 1) {\n                    const hourOrRange = entry[0];\n                    global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else {\n                const hourOrRange = entry;\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        });\n    }\n    const hourlyCostSorted = sortMapByValue(hourlyCost);\n    Array.from(hourlyCostSorted.keys()).forEach(key => {\n        if (hourlyCostSelected.size < powerConsumptionHours) {\n            hourlyCostSelected.set(key, hourlyCost.get(key));\n        }\n    });\n    hourlyCostSelected = sortMapByKey(hourlyCostSelected);\n}\nreturn { payload: [...hourlyCostSelected.keys()] };",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -377,8 +357,9 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "generate most cost efficient hours chart",
-        "func": "const data = [];\nconst labels = [];\n/*\nObject.keys(msg.payload).forEach(key => {\n    data.push(1);\n    labels.push(Number(key.substring(11)));\n});\n*/\n\nconst selectedHours = [];\n//Object.keys(msg.payload).forEach(key => selectedHours.push(key.toString()));\nmsg.payload.forEach(key => selectedHours.push(Number(key.substring(11))));\n\nfor(let hour=0; hour<24; hour++) {\n    data.push(selectedHours.indexOf(hour) > -1 ? 1 : 0);\n    labels.push(hour);\n}\nreturn { payload: [{ series: ['X'], data: [data], labels }] };\n//return { payload: selectedHours };",
+        "func": "const data = [];\nconst labels = [];\n\nconst selectedHours = [];\nmsg.payload.forEach(key => selectedHours.push(Number(key.substring(11))));\n\nfor(let hour=0; hour<24; hour++) {\n    data.push(selectedHours.indexOf(hour) > -1 ? 1 : 0);\n    labels.push(hour);\n}\nreturn { payload: [{ series: ['X'], data: [data], labels }] };\n",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -557,8 +538,9 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "prepare HTP request",
-        "func": "const solcastResourceId = flow.get('solcastResourceId');\nconst solcastApiKey = flow.get('solcastApiKey');\nreturn { url: `https://api.solcast.com.au/rooftop_sites/${solcastResourceId}/forecasts?format=json&api_key=${solcastApiKey}`};",
+        "func": "const solcastResourceId = env.get('solcastResourceId');\nconst solcastApiKey = env.get('solcastApiKey');\nreturn { url: `https://api.solcast.com.au/rooftop_sites/${solcastResourceId}/forecasts?format=json&api_key=${solcastApiKey}`};",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -613,7 +595,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "prepare HTP request",
-        "func": "return {\n  authorization: `Bearer ${flow.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {today {total startsAt}}}}}}\"}'\n};",
+        "func": "return {\n  authorization: `Bearer ${env.get('tibberAuthorizationToken')}`,\n  payload: '{\"query\":\"{viewer {homes {currentSubscription {priceInfo {today {total startsAt}}}}}}\"}'\n};",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1010,7 +992,7 @@
         "type": "function",
         "z": "53909232bb435dbf",
         "name": "fallback cost efficient hours",
-        "func": "var datefns = global.get('datefns');\n\nconst fallbackHours = flow.get('fallbackHours');\nconst date = global.get('toZonedDate')(new Date());\nconst dow = datefns.getDay(date);\nconst template = datefns.format(date, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\n\nif (fallbackHours) {\n    fallbackHours.forEach(entry => {\n        if (Array.isArray(entry)) {\n            if (entry.length === 2) {\n                const dayOrRange = entry[0];\n                const hourOrRange = entry[1];\n                if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                    global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else if (entry.length === 1) {\n                const hourOrRange = entry[0];\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        } else {\n            const hourOrRange = entry;\n            global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n        }\n    });\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
+        "func": "var datefns = global.get('datefns');\n\nconst fallbackHours = env.get('fallbackHours');\nconst date = global.get('toZonedDate')(new Date());\nconst dow = datefns.getDay(date);\nconst template = datefns.format(date, \"yyyy-MM-dd'T'HH\")\n\nconst hourlyCost = new Map();\nconst hourlyCostSelected = new Map();\n\nif (fallbackHours) {\n    fallbackHours.forEach(entry => {\n        if (Array.isArray(entry)) {\n            if (entry.length === 2) {\n                const dayOrRange = entry[0];\n                const hourOrRange = entry[1];\n                if (global.get('rangeContainsValue')(dow, dayOrRange) || dow === Number(dayOrRange)) {\n                    global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n                }\n            } else if (entry.length === 1) {\n                const hourOrRange = entry[0];\n                global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n            }\n        } else {\n            const hourOrRange = entry;\n            global.get('addSelectedHours')(template, hourOrRange, hourlyCostSelected, hourlyCost);\n        }\n    });\n}\n\nreturn { payload: [...hourlyCostSelected.keys()] };",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
