@@ -28,5 +28,6 @@ Zusätzlich können folgende **optionale Parameter** gesetzt werden:
             - zweites Element: Stundenbereich
             - drittes Element: Anzahhl der Stunden innerhalb des Stundenbereichs, wobei die kostengünstigsten Stunden gewählt werden
             - viertes Element: Pflichtstunden innerhalb des Stundenbereichs
+- `distributeHours`: zur Vermeidung von extrem langen Ausschaltphasen bedingt durch Einschaltzeiten in den ersten Stunden des vorangegangenen Tages und in den letzten Stunden des aktuellen Tages. Das kann zu Ausschaltzeiten von 30 Stunden und mehr führen. Durch setzen eine Wertes von `[2,18,3]` wird zum Ausdruck gebracht: Innerhalb von 18 Stunden nach der `2`-letzten Einschaltstunde des Vortages müssen 3 Einschaltstunden erfolgen.
 - `fallbackHours`: falls Strome-Preise oder PV-Prognose nicht abgerufen werden können, wird die Wärmepumpe in den mit `fallbackHours` identifizierten Stunden laufen. Die Syntax des Wertes ist identisch mit `mandatoryHours`, wobei hier aber nur eine Zahl oder ein Array mit 2 Elemente angegeben werden können.
 - `pvForecastFactor`: wird mit der prognostizierten PV-Leistung multipliziert als Korrekturfaktor, wenn die Prognosen regelmäßig abweichen
