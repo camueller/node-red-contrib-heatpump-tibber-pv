@@ -1,6 +1,8 @@
 # Konfiguration
 ## Config
-Dieser Flow verwendet Umgebungsvariablen zur Konfiguration. 
+Dieser Flow verwendet Umgebungsvariablen zur Konfiguration.
+
+![Konfiguration](configuration.png)
 
 Folgende **Pflicht-Parameter** müssen gesetzt werden:
 
