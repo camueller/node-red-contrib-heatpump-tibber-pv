@@ -1,6 +1,6 @@
 # Konfiguration
 ## Config
-Dieser Flow verwendet Umgebungsvariablen zur Konfiguration.
+Dieser Flow verwendet Umgebungsvariablen zur Konfiguration, die konfiguriert werden können via `Menü -> Flow -> Umbenennen -> Schaltfläche "Umgebungsvariablen" (unterhalb der "Fertig"-Schaltfläche)`:
 
 ![Konfiguration](configuration.png)
 
