@@ -91,8 +91,8 @@ Folgende Module müssen über `Manage Palette -> Install` installiert werden:
 - `node-red-contrib-ui-led`
 
 Einige weitere Bibliotheken müssen manuell in der Shell installiert werden, während man sich im Verzeichnis `~/.node-red` befindet:
-- `date-fns`
-- `date-fns-tz`
+- `date-fns@2.30.0`
+- `date-fns-tz@2.0.0`
 
 Dazu muss der nachfolgende Befehl für jeden Namen aus der vorangegangenen Liste einmal ausgeführt werden, wobei `<name>` jeweils durch den Listeneintrag ersetzt wird:
 
